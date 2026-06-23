@@ -5,289 +5,147 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Создание персонажа в мире Рунезии — выбери расу, руны и имя.">
   <meta property="og:title" content="Создание персонажа — Вики Рунезии">
-  <meta property="og:description" content="Создай своего Собирателя — выбери расу и исконную руну.">
+  <meta property="og:description" content="Создай своего Собирателя и сохрани в Зале Героев.">
   <meta property="og:type" content="website">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <title>Создание персонажа — Вики Рунезии</title>
   <link rel="stylesheet" href="../styles/style.css">
   <style>
-    .step-indicators {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
-    }
-    .step-dot {
-      flex: 1;
-      min-width: 80px;
-      text-align: center;
-      padding: 10px 6px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      color: #555;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      transition: 0.3s;
-    }
-    .step-dot.active {
-      color: #e8c547;
-      background: rgba(232,197,71,0.1);
-      border-color: rgba(232,197,71,0.3);
-    }
-    .step-dot.done {
-      color: #4a4;
-      border-color: rgba(68,170,68,0.3);
-    }
+    .step-indicators { display:flex; gap:4px; margin-bottom:28px; flex-wrap:wrap; }
+    .step-dot { flex:1; min-width:70px; text-align:center; padding:10px 4px; border-radius:8px; font-size:0.78rem; color:#555; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); transition:0.3s; }
+    .step-dot.active { color:#e8c547; background:rgba(232,197,71,0.1); border-color:rgba(232,197,71,0.3); }
+    .step-dot.done { color:#4a4; border-color:rgba(68,170,68,0.3); }
+    .step-content { display:none; }
+    .step-content.active { display:block; }
 
-    .step-content { display: none; }
-    .step-content.active { display: block; }
+    .hall { margin-bottom:32px; }
+    .hall-title { font-family:'Cinzel',serif; color:#e8c547; margin-bottom:12px; display:flex; align-items:center; gap:10px; }
+    .hall-title span { font-size:0.85rem; color:#666; font-family:sans-serif; }
+    .hall-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; }
+    .hall-card { padding:14px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); cursor:pointer; transition:0.2s; position:relative; }
+    .hall-card:hover { border-color:rgba(232,197,71,0.3); }
+    .hall-card .hc-name { color:#e8c547; font-family:'Cinzel',serif; }
+    .hall-card .hc-meta { font-size:0.8rem; color:#8888aa; margin-top:2px; }
+    .hall-card .hc-runes { margin-top:6px; display:flex; gap:4px; flex-wrap:wrap; }
+    .hall-card .hc-del { position:absolute; top:6px; right:8px; color:#633; cursor:pointer; font-size:0.85rem; opacity:0; transition:0.2s; background:none; border:none; }
+    .hall-card:hover .hc-del { opacity:1; }
+    .hall-card .hc-del:hover { color:#c44; }
+    .hall-empty { color:#555; font-size:0.9rem; padding:16px; text-align:center; border:1px dashed rgba(255,255,255,0.06); border-radius:10px; }
 
-    .race-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 12px;
-      margin-top: 16px;
-      max-height: 420px;
-      overflow-y: auto;
-      padding-right: 8px;
-    }
-    .race-grid::-webkit-scrollbar { width: 4px; }
-    .race-grid::-webkit-scrollbar-thumb { background: rgba(232,197,71,0.3); border-radius: 4px; }
+    .race-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; margin-top:16px; max-height:400px; overflow-y:auto; padding-right:8px; }
+    .race-grid::-webkit-scrollbar { width:4px; }
+    .race-grid::-webkit-scrollbar-thumb { background:rgba(232,197,71,0.3); border-radius:4px; }
+    .race-opt { cursor:pointer; padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); transition:0.2s; }
+    .race-opt:hover { border-color:rgba(232,197,71,0.3); background:rgba(232,197,71,0.05); }
+    .race-opt.chosen { border-color:#e8c547; background:rgba(232,197,71,0.1); }
+    .race-opt .ro-name { color:#e8c547; font-family:'Cinzel',serif; font-size:1.05rem; }
+    .race-opt .ro-rune { font-size:0.8rem; opacity:0.7; display:block; margin-top:2px; }
+    .race-opt .ro-meta { font-size:0.8rem; color:#7777aa; display:block; margin-top:4px; }
 
-    .race-opt {
-      cursor: pointer;
-      padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.06);
-      background: rgba(255,255,255,0.02);
-      transition: 0.2s;
-    }
-    .race-opt:hover {
-      border-color: rgba(232,197,71,0.3);
-      background: rgba(232,197,71,0.05);
-    }
-    .race-opt.chosen {
-      border-color: #e8c547;
-      background: rgba(232,197,71,0.1);
-    }
-    .race-opt .ro-name { color: #e8c547; font-family: 'Cinzel', serif; font-size: 1.05rem; }
-    .race-opt .ro-rune { font-size: 0.8rem; opacity: 0.7; display: block; margin-top: 2px; }
-    .race-opt .ro-meta { font-size: 0.8rem; color: #7777aa; display: block; margin-top: 4px; }
+    .race-search { width:100%; padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:#d4d4e0; font-size:0.95rem; outline:none; transition:0.2s; margin-bottom:12px; }
+    .race-search:focus { border-color:rgba(232,197,71,0.4); }
 
-    .race-search {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.04);
-      color: #d4d4e0;
-      font-size: 0.95rem;
-      outline: none;
-      transition: 0.2s;
-      margin-bottom: 12px;
-    }
-    .race-search:focus { border-color: rgba(232,197,71,0.4); }
+    .rune-preview { text-align:center; padding:30px 20px; border-radius:16px; margin:20px 0; }
+    .rune-preview .rp-name { font-family:'Cinzel Decorative',serif; font-size:2rem; display:block; }
+    .rune-preview .rp-desc { margin-top:8px; color:#aaa; font-size:0.95rem; }
 
-    .rune-preview {
-      text-align: center;
-      padding: 30px 20px;
-      border-radius: 16px;
-      margin: 20px 0;
-    }
-    .rune-preview .rp-name {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: 2rem;
-      display: block;
-    }
-    .rune-preview .rp-desc {
-      margin-top: 8px;
-      color: #aaa;
-      font-size: 0.95rem;
-    }
+    .rune-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; margin-top:16px; max-height:380px; overflow-y:auto; padding-right:8px; }
+    .rune-grid::-webkit-scrollbar { width:4px; }
+    .rune-grid::-webkit-scrollbar-thumb { background:rgba(232,197,71,0.3); border-radius:4px; }
+    .rune-opt { cursor:pointer; padding:12px; border-radius:10px; text-align:center; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); transition:0.2s; }
+    .rune-opt:hover { border-color:rgba(232,197,71,0.3); transform:translateY(-1px); }
+    .rune-opt.chosen { border-color:#e8c547; background:rgba(232,197,71,0.1); }
+    .rune-opt .ro-rn { font-size:0.95rem; font-weight:600; display:block; }
+    .rune-opt .ro-rd { font-size:0.75rem; opacity:0.6; display:block; margin-top:2px; }
+    .rune-opt .ro-rcolor { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:middle; }
 
-    .rune-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 10px;
-      margin-top: 16px;
-      max-height: 380px;
-      overflow-y: auto;
-      padding-right: 8px;
-    }
-    .rune-grid::-webkit-scrollbar { width: 4px; }
-    .rune-grid::-webkit-scrollbar-thumb { background: rgba(232,197,71,0.3); border-radius: 4px; }
+    .form-row { display:flex; gap:16px; flex-wrap:wrap; margin-top:16px; }
+    .form-group { flex:1; min-width:180px; }
+    .form-group label { display:block; font-size:0.85rem; color:#8888aa; margin-bottom:6px; }
+    .form-input { width:100%; padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:#d4d4e0; font-size:0.95rem; outline:none; transition:0.2s; }
+    .form-input:focus { border-color:rgba(232,197,71,0.4); }
+    .form-select { width:100%; padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:#d4d4e0; font-size:0.95rem; outline:none; transition:0.2s; appearance:none; cursor:pointer; }
+    .form-select:focus { border-color:rgba(232,197,71,0.4); }
+    .form-select option { background:#0a0a1a; color:#d4d4e0; }
+    .form-textarea { width:100%; min-height:80px; padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:#d4d4e0; font-size:0.95rem; outline:none; transition:0.2s; resize:vertical; font-family:inherit; }
+    .form-textarea:focus { border-color:rgba(232,197,71,0.4); }
 
-    .rune-opt {
-      cursor: pointer;
-      padding: 12px;
-      border-radius: 10px;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.06);
-      background: rgba(255,255,255,0.02);
-      transition: 0.2s;
-    }
-    .rune-opt:hover { border-color: rgba(232,197,71,0.3); transform: translateY(-1px); }
-    .rune-opt.chosen { border-color: #e8c547; background: rgba(232,197,71,0.1); }
-    .rune-opt .ro-rn { font-size: 0.95rem; font-weight: 600; display: block; }
-    .rune-opt .ro-rd { font-size: 0.75rem; opacity: 0.6; display: block; margin-top: 2px; }
-    .rune-opt .ro-rcolor {
-      display: inline-block;
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      margin-right: 6px;
-      vertical-align: middle;
-    }
+    .backstory-box { position:relative; margin-top:16px; }
+    .backstory-box .form-textarea { min-height:140px; }
+    .backstory-box .regenerate-btn { position:absolute; bottom:12px; right:12px; padding:6px 14px; border-radius:6px; border:1px solid rgba(232,197,71,0.2); background:rgba(232,197,71,0.08); color:#e8c547; font-size:0.8rem; cursor:pointer; transition:0.2s; }
+    .backstory-box .regenerate-btn:hover { background:rgba(232,197,71,0.15); }
 
-    .name-input {
-      width: 100%;
-      max-width: 360px;
-      padding: 12px 16px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.04);
-      color: #d4d4e0;
-      font-size: 1.1rem;
-      outline: none;
-      transition: 0.2s;
-      margin-top: 12px;
-    }
-    .name-input:focus { border-color: rgba(232,197,71,0.4); }
+    .btn-row { margin-top:24px; display:flex; gap:12px; flex-wrap:wrap; }
+    .btn { padding:10px 28px; border-radius:8px; border:1px solid rgba(232,197,71,0.3); background:rgba(232,197,71,0.1); color:#e8c547; font-family:'Cinzel',serif; font-size:0.95rem; cursor:pointer; transition:0.2s; }
+    .btn:hover { background:rgba(232,197,71,0.2); }
+    .btn:disabled { opacity:0.3; cursor:default; }
+    .btn-secondary { border-color:rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); color:#aaa; }
+    .btn-secondary:hover { background:rgba(255,255,255,0.06); }
+    .btn-danger { border-color:rgba(200,50,50,0.3); color:#c44; }
+    .btn-danger:hover { background:rgba(200,50,50,0.1); }
 
-    .btn-row { margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap; }
-    .btn {
-      padding: 10px 28px;
-      border-radius: 8px;
-      border: 1px solid rgba(232,197,71,0.3);
-      background: rgba(232,197,71,0.1);
-      color: #e8c547;
-      font-family: 'Cinzel', serif;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .btn:hover { background: rgba(232,197,71,0.2); }
-    .btn:disabled { opacity: 0.3; cursor: default; }
-    .btn-secondary {
-      border-color: rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.03);
-      color: #aaa;
-    }
-    .btn-secondary:hover { background: rgba(255,255,255,0.06); }
+    .skip-link { color:#666; cursor:pointer; font-size:0.85rem; text-decoration:underline; margin-top:12px; display:inline-block; }
+    .skip-link:hover { color:#888; }
 
-    .final-card {
-      border-radius: 16px;
-      padding: 30px;
-      margin: 20px 0;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .final-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      opacity: 0.08;
-      background: radial-gradient(ellipse at center, var(--aura-color, #e8c547), transparent 70%);
-    }
-    .final-card .fc-name {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: 2.2rem;
-      position: relative;
-    }
-    .final-card .fc-race {
-      font-size: 1rem;
-      color: #aaa;
-      margin-top: 4px;
-      position: relative;
-    }
-    .final-card .fc-runes {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      margin-top: 18px;
-      position: relative;
-      flex-wrap: wrap;
-    }
-    .final-card .fc-rune {
-      display: inline-block;
-      padding: 6px 18px;
-      border-radius: 20px;
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-    .final-card .fc-desc {
-      margin-top: 16px;
-      font-size: 0.9rem;
-      color: #8888aa;
-      position: relative;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .final-card .fc-rune-count {
-      margin-top: 12px;
-      font-size: 0.85rem;
-      color: #666;
-      position: relative;
-    }
+    .final-card { border-radius:16px; padding:30px; margin:20px 0; text-align:center; position:relative; overflow:hidden; }
+    .final-card::before { content:''; position:absolute; inset:0; opacity:0.08; background:radial-gradient(ellipse at center, var(--aura-color,#e8c547), transparent 70%); }
+    .final-card .fc-name { font-family:'Cinzel Decorative',serif; font-size:2rem; position:relative; }
+    .final-card .fc-race { font-size:1rem; color:#aaa; margin-top:2px; position:relative; }
+    .final-card .fc-details { font-size:0.85rem; color:#7777aa; margin-top:2px; position:relative; }
+    .final-card .fc-runes { display:flex; gap:12px; justify-content:center; margin-top:16px; position:relative; flex-wrap:wrap; }
+    .final-card .fc-rune { display:inline-block; padding:6px 18px; border-radius:20px; font-weight:600; font-size:0.9rem; }
+    .final-card .fc-section { margin-top:16px; text-align:left; position:relative; }
+    .final-card .fc-section h4 { color:#e8c547; font-size:0.9rem; margin-bottom:4px; }
+    .final-card .fc-section p { color:#aaa; font-size:0.85rem; line-height:1.5; white-space:pre-wrap; }
+    .final-card .fc-saved { margin-top:12px; color:#4a4; font-size:0.85rem; position:relative; }
 
-    .rune-fire { background: #cc3300; }
-    .rune-water { background: #3399cc; }
-    .rune-ice { background: #4488dd; }
-    .rune-earth { background: #8b6914; }
-    .rune-air { background: #8899bb; }
-    .rune-blood { background: #990000; }
-    .rune-shadow { background: #7b2d8e; }
-    .rune-light { background: #ccaa33; color: #222; }
-    .rune-darkness { background: #330033; }
-    .rune-life { background: #228b22; }
-    .rune-death { background: #555555; }
-    .rune-bone { background: #999988; color: #222; }
-    .rune-rage { background: #cc5500; }
-    .rune-protection { background: #778899; }
-    .rune-essence { background: #228888; }
-    .rune-memory { background: #b8960f; }
-    .rune-dream { background: #664488; }
-    .rune-geometry { background: #228855; }
-    .rune-sound { background: #7777aa; }
-    .rune-flesh { background: #cc5577; }
-    .rune-metal { background: #666677; }
-    .rune-soul { background: #cc6666; }
-    .rune-unique { background: #555566; }
+    .rune-fire { background:#cc3300; }
+    .rune-water { background:#3399cc; }
+    .rune-ice { background:#4488dd; }
+    .rune-earth { background:#8b6914; }
+    .rune-air { background:#8899bb; }
+    .rune-blood { background:#990000; }
+    .rune-shadow { background:#7b2d8e; }
+    .rune-light { background:#ccaa33; color:#222; }
+    .rune-darkness { background:#330033; }
+    .rune-life { background:#228b22; }
+    .rune-death { background:#555555; }
+    .rune-bone { background:#999988; color:#222; }
+    .rune-rage { background:#cc5500; }
+    .rune-protection { background:#778899; }
+    .rune-essence { background:#228888; }
+    .rune-memory { background:#b8960f; }
+    .rune-dream { background:#664488; }
+    .rune-geometry { background:#228855; }
+    .rune-sound { background:#7777aa; }
+    .rune-flesh { background:#cc5577; }
+    .rune-metal { background:#666677; }
+    .rune-soul { background:#cc6666; }
+    .rune-unique { background:#555566; }
 
-    .aura-fire { background: linear-gradient(135deg, rgba(204,51,0,0.15), rgba(204,51,0,0.03)); }
-    .aura-water { background: linear-gradient(135deg, rgba(51,153,204,0.15), rgba(51,153,204,0.03)); }
-    .aura-ice { background: linear-gradient(135deg, rgba(68,136,221,0.15), rgba(68,136,221,0.03)); }
-    .aura-earth { background: linear-gradient(135deg, rgba(139,105,20,0.15), rgba(139,105,20,0.03)); }
-    .aura-air { background: linear-gradient(135deg, rgba(136,153,187,0.15), rgba(136,153,187,0.03)); }
-    .aura-blood { background: linear-gradient(135deg, rgba(153,0,0,0.15), rgba(153,0,0,0.03)); }
-    .aura-shadow { background: linear-gradient(135deg, rgba(123,45,142,0.15), rgba(123,45,142,0.03)); }
-    .aura-light { background: linear-gradient(135deg, rgba(204,170,51,0.15), rgba(204,170,51,0.03)); }
-    .aura-darkness { background: linear-gradient(135deg, rgba(51,0,51,0.2), rgba(51,0,51,0.03)); }
-    .aura-life { background: linear-gradient(135deg, rgba(34,139,34,0.15), rgba(34,139,34,0.03)); }
-    .aura-death { background: linear-gradient(135deg, rgba(85,85,85,0.15), rgba(85,85,85,0.03)); }
-    .aura-bone { background: linear-gradient(135deg, rgba(153,153,136,0.15), rgba(153,153,136,0.03)); }
-    .aura-rage { background: linear-gradient(135deg, rgba(204,85,0,0.15), rgba(204,85,0,0.03)); }
-    .aura-protection { background: linear-gradient(135deg, rgba(119,136,153,0.15), rgba(119,136,153,0.03)); }
-    .aura-essence { background: linear-gradient(135deg, rgba(34,136,136,0.15), rgba(34,136,136,0.03)); }
-    .aura-memory { background: linear-gradient(135deg, rgba(184,150,15,0.15), rgba(184,150,15,0.03)); }
-    .aura-dream { background: linear-gradient(135deg, rgba(102,68,136,0.15), rgba(102,68,136,0.03)); }
-    .aura-geometry { background: linear-gradient(135deg, rgba(34,136,85,0.15), rgba(34,136,85,0.03)); }
-    .aura-sound { background: linear-gradient(135deg, rgba(119,119,170,0.15), rgba(119,119,170,0.03)); }
-    .aura-flesh { background: linear-gradient(135deg, rgba(204,85,119,0.15), rgba(204,85,119,0.03)); }
-    .aura-metal { background: linear-gradient(135deg, rgba(102,102,119,0.15), rgba(102,102,119,0.03)); }
-    .aura-soul { background: linear-gradient(135deg, rgba(204,102,102,0.15), rgba(204,102,102,0.03)); }
-    .aura-unique { background: linear-gradient(135deg, rgba(85,85,102,0.12), rgba(85,85,102,0.03)); }
-
-    .skip-link {
-      color: #666;
-      cursor: pointer;
-      font-size: 0.85rem;
-      text-decoration: underline;
-      margin-top: 12px;
-      display: inline-block;
-    }
-    .skip-link:hover { color: #888; }
+    .aura-fire { background:linear-gradient(135deg,rgba(204,51,0,0.15),rgba(204,51,0,0.03)); }
+    .aura-water { background:linear-gradient(135deg,rgba(51,153,204,0.15),rgba(51,153,204,0.03)); }
+    .aura-ice { background:linear-gradient(135deg,rgba(68,136,221,0.15),rgba(68,136,221,0.03)); }
+    .aura-earth { background:linear-gradient(135deg,rgba(139,105,20,0.15),rgba(139,105,20,0.03)); }
+    .aura-air { background:linear-gradient(135deg,rgba(136,153,187,0.15),rgba(136,153,187,0.03)); }
+    .aura-blood { background:linear-gradient(135deg,rgba(153,0,0,0.15),rgba(153,0,0,0.03)); }
+    .aura-shadow { background:linear-gradient(135deg,rgba(123,45,142,0.15),rgba(123,45,142,0.03)); }
+    .aura-light { background:linear-gradient(135deg,rgba(204,170,51,0.15),rgba(204,170,51,0.03)); }
+    .aura-darkness { background:linear-gradient(135deg,rgba(51,0,51,0.2),rgba(51,0,51,0.03)); }
+    .aura-life { background:linear-gradient(135deg,rgba(34,139,34,0.15),rgba(34,139,34,0.03)); }
+    .aura-death { background:linear-gradient(135deg,rgba(85,85,85,0.15),rgba(85,85,85,0.03)); }
+    .aura-bone { background:linear-gradient(135deg,rgba(153,153,136,0.15),rgba(153,153,136,0.03)); }
+    .aura-rage { background:linear-gradient(135deg,rgba(204,85,0,0.15),rgba(204,85,0,0.03)); }
+    .aura-protection { background:linear-gradient(135deg,rgba(119,136,153,0.15),rgba(119,136,153,0.03)); }
+    .aura-essence { background:linear-gradient(135deg,rgba(34,136,136,0.15),rgba(34,136,136,0.03)); }
+    .aura-memory { background:linear-gradient(135deg,rgba(184,150,15,0.15),rgba(184,150,15,0.03)); }
+    .aura-dream { background:linear-gradient(135deg,rgba(102,68,136,0.15),rgba(102,68,136,0.03)); }
+    .aura-geometry { background:linear-gradient(135deg,rgba(34,136,85,0.15),rgba(34,136,85,0.03)); }
+    .aura-sound { background:linear-gradient(135deg,rgba(119,119,170,0.15),rgba(119,119,170,0.03)); }
+    .aura-flesh { background:linear-gradient(135deg,rgba(204,85,119,0.15),rgba(204,85,119,0.03)); }
+    .aura-metal { background:linear-gradient(135deg,rgba(102,102,119,0.15),rgba(102,102,119,0.03)); }
+    .aura-soul { background:linear-gradient(135deg,rgba(204,102,102,0.15),rgba(204,102,102,0.03)); }
+    .aura-unique { background:linear-gradient(135deg,rgba(85,85,102,0.12),rgba(85,85,102,0.03)); }
   </style>
 </head>
 <body>
@@ -307,7 +165,7 @@
     <div class="page-header">
       <a href="index.html" class="back-link">← Назад к вики</a>
       <h1>Создание персонажа</h1>
-      <p>Создай своего Собирателя рун.</p>
+      <p>Создай своего Собирателя рун и сохрани в Зал Героев.</p>
     </div>
 
     <div class="cross-ref">
@@ -319,6 +177,12 @@
     </div>
 
     <div class="article">
+      <!-- Hall of Heroes -->
+      <div class="hall" id="hall-section">
+        <div class="hall-title">✧ Зал Собирателей <span id="hall-count"></span></div>
+        <div id="hall-grid" class="hall-grid"></div>
+      </div>
+
       <div id="step-indicators" class="step-indicators"></div>
 
       <!-- Step 1: Race -->
@@ -355,22 +219,103 @@
         </div>
       </div>
 
-      <!-- Step 4: Name -->
+      <!-- Step 4: Name, Gender, Age -->
       <div id="step-4" class="step-content">
-        <h2>Шаг 4: Имя персонажа</h2>
+        <h2>Шаг 4: Имя и происхождение</h2>
         <p class="lore-intro">Как назовёшь своего Собирателя?</p>
-        <input type="text" class="name-input" id="name-input" placeholder="Введи имя..." maxlength="24" oninput="checkName()">
+        <div class="form-row">
+          <div class="form-group" style="flex:2">
+            <label>Имя персонажа</label>
+            <input type="text" class="form-input" id="name-input" placeholder="Введи имя..." maxlength="24" oninput="onNameChange()">
+          </div>
+          <div class="form-group">
+            <label>Пол</label>
+            <select class="form-select" id="gender-input" onchange="onGenderChange()">
+              <option value="male">Мужской</option>
+              <option value="female">Женский</option>
+            </select>
+          </div>
+          <div class="form-group" style="max-width:100px">
+            <label>Возраст</label>
+            <input type="number" class="form-input" id="age-input" value="20" min="12" max="999" oninput="onAgeChange()">
+          </div>
+        </div>
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="goStep(3)">← Назад</button>
-          <button class="btn" id="finish-btn" disabled onclick="finishCreation()">Завершить!</button>
+          <button class="btn" id="to-step-5" disabled onclick="goStep(5)">Далее →</button>
         </div>
       </div>
 
-      <!-- Step 5: Final -->
+      <!-- Step 5: Birthplace + Description -->
       <div id="step-5" class="step-content">
+        <h2>Шаг 5: Родина и описание</h2>
+        <p class="lore-intro">Откуда твой герой родом?</p>
+        <div class="form-row">
+          <div class="form-group" style="flex:2">
+            <label>Место рождения</label>
+            <input type="text" class="form-input" id="birthplace-input" placeholder="..." list="location-list" oninput="onBirthplaceChange()">
+            <datalist id="location-list">
+              <option value="Кардис, Сердцеград">
+              <option value="Кардис, Золотые Нивы">
+              <option value="Церебрум, Хрустальная Библиотека">
+              <option value="Церебрум, Хрустальные Леса">
+              <option value="Гепар, Кулак Грома">
+              <option value="Гепар, Собор Семи Проток">
+              <option value="Гепар, Город Перекрестка">
+              <option value="Гастрон, Кратер Обжоры">
+              <option value="Гастрон, Корнеград">
+              <option value="Гастрон, Болотный Улей">
+              <option value="Гастрон, Некрополис">
+              <option value="Сомнус, Мираж-Град">
+              <option value="Сомнус, Сомниполис">
+              <option value="Сомнус, Ледяные равнины">
+              <option value="Аурелия, Солнечный Бастион">
+              <option value="Вердиган, Кузня Ярости">
+              <option value="Альбион Туманов">
+              <option value="Принципат, Гавань Вечного Покоя">
+              <option value="Монастырская Федерация">
+              <option value="Ксилотроп, Леса">
+              <option value="Демиургион, Архонтис">
+              <option value="Демиургион, Хребет Бегемота">
+              <option value="Зазеркалье">
+              <option value="Трещины Полотна">
+              <option value="Разломы реальности">
+            </datalist>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Описание (внешность, характер, цели)</label>
+            <textarea class="form-textarea" id="desc-input" placeholder="Опиши своего персонажа..." maxlength="500" oninput="onDescChange()"></textarea>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goStep(4)">← Назад</button>
+          <button class="btn" onclick="goStep(6)">Далее →</button>
+        </div>
+      </div>
+
+      <!-- Step 6: Backstory -->
+      <div id="step-6" class="step-content">
+        <h2>Шаг 6: Предыстория</h2>
+        <p class="lore-intro">История твоего персонажа — сгенерирована автоматически. Ты можешь отредактировать её.</p>
+        <div class="backstory-box">
+          <textarea class="form-textarea" id="backstory-input" placeholder="..." oninput="onBackstoryChange()"></textarea>
+          <button class="regenerate-btn" onclick="generateBackstory()">⟳ Сгенерировать заново</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goStep(5)">← Назад</button>
+          <button class="btn" onclick="goStep(7)">К финалу →</button>
+        </div>
+      </div>
+
+      <!-- Step 7: Final -->
+      <div id="step-7" class="step-content">
         <h2>Твой Собиратель</h2>
         <div id="final-card" class="final-card"></div>
-        <div class="btn-row">
+        <div class="btn-row" style="justify-content:center">
+          <button class="btn" id="save-btn" onclick="saveHero()">✧ Сохранить в Зал Собирателей</button>
+          <button class="btn btn-secondary" onclick="goStep(6)">← Назад</button>
           <button class="btn btn-secondary" onclick="resetAll()">Начать заново</button>
         </div>
       </div>
@@ -384,41 +329,42 @@
   </footer>
   <script src="../scripts/main.js"></script>
   <script>
-    const STEP_LABELS = ['Раса', 'Руна', 'Вторая руна', 'Имя', 'Готово'];
+    const STEP_LABELS = ['Раса','Руна','Вторая руна','Личность','Родина','Предыстория','Готово'];
+    const STORAGE_KEY = 'runezia_heroes';
 
     const RACE_DATA = [
-      { key:'tenekhody', name:'Тенеходы', rune:'Тень', rclass:'rune-shadow', aclass:'aura-shadow', meta:'Гепар, Сомнум', desc:'Первая раса, созданная Садовником Артаком. Их тела частично сливаются с тенями.' },
-      { key:'khitony', name:'Хитоны', rune:'—', rclass:'rune-unique', aclass:'aura-unique', meta:'Ксилотроп', desc:'Насекомоподобная раса с хитиновым панцирем. Коллективный разум и единство колонии.' },
-      { key:'troglodyty', name:'Троглодиты', rune:'Камень', rclass:'rune-earth', aclass:'aura-earth', meta:'Гепар, Гастрон', desc:'Коренастые подземные жители с каменной кожей и геомантическим чутьём.' },
-      { key:'veily', name:'Вейлы', rune:'Природа', rclass:'rune-life', aclass:'aura-life', meta:'Ксилотроп, Гепар', desc:'Эльфоподобная раса в симбиозе с природой. Слышат шепот деревьев.' },
-      { key:'sikhar', name:'Сихарь', rune:'Псионика', rclass:'rune-unique', aclass:'aura-unique', meta:'Церебрум', desc:'Псионическая раса с телепатией и телекинезом. Меритократия разума.' },
-      { key:'drevolyudi', name:'Древолюди', rune:'Гигантизм', rclass:'rune-rage', aclass:'aura-rage', meta:'Ксилотроп', desc:'Гиганты трёхметрового роста с колоссальной силой. Предки многих рас.' },
-      { key:'sikhari', name:'Сихарри', rune:'Амбиция', rclass:'rune-unique', aclass:'aura-unique', meta:'Гепар', desc:'Агрессивная версия псиоников. Жажда власти и доминирования.' },
-      { key:'vitriks', name:'Витрикс', rune:'Стекло', rclass:'rune-geometry', aclass:'aura-geometry', meta:'Церебрум', desc:'Кристаллические существа из живого стекла. Ловки, но хрупки.' },
-      { key:'mikonty', name:'Миконты', rune:'Споры', rclass:'rune-death', aclass:'aura-death', meta:'Гастрон', desc:'Разумные грибницы. Регенерация, коллективное сознание, споровые сети.' },
-      { key:'nokturny', name:'Ноктурны', rune:'Кровь', rclass:'rune-blood', aclass:'aura-blood', meta:'Гепар, Сомнум', desc:'Бледнокожие хищники с вампирическими инстинктами и эхолокацией.' },
-      { key:'verfolki', name:'Верфолки', rune:'Дикость', rclass:'rune-rage', aclass:'aura-rage', meta:'Гепар, Вердиган', desc:'Оборотни, трансформирующиеся в звериную форму. Стая и вожак.' },
-      { key:'kamenevzory', name:'Каменевзоры', rune:'Минерал', rclass:'rune-earth', aclass:'aura-earth', meta:'Гепар, Аурелия', desc:'Питаются камнями. Кожа в минеральных наростах. Мирные созидатели.' },
-      { key:'yotuny', name:'Йотуны', rune:'Лёд', rclass:'rune-ice', aclass:'aura-ice', meta:'Сомнус, Гепар', desc:'Ледяные великаны с контролем мороза. Тела из инея и кристаллов.' },
-      { key:'piroplasty', name:'Пиропласты', rune:'Огонь', rclass:'rune-fire', aclass:'aura-fire', meta:'Вердиган, Гастрон', desc:'Огненные слизи из жидкого пламени. Не имеют формы, иммунны к огню.' },
-      { key:'golemy', name:'Големы Горма', rune:'Механика', rclass:'rune-metal', aclass:'aura-metal', meta:'Вердиган', desc:'Разумные статуи из камня и металла. Модульная конструкция.' },
-      { key:'kukly', name:'Куклы Кошмара', rune:'Марионетка', rclass:'rune-darkness', aclass:'aura-darkness', meta:'Сомнум', desc:'Ожившие марионетки из плоти. Не чувствуют боли, не знают страха.' },
-      { key:'kaimely', name:'Каймелы', rune:'Демон', rclass:'rune-rage', aclass:'aura-rage', meta:'Демиургион', desc:'Демоническая раса. Рога, хвост, красная кожа. Демоническая трансформация.' },
-      { key:'arkhonty', name:'Архонты', rune:'Порядок', rclass:'rune-light', aclass:'aura-light', meta:'Демиургион', desc:'Ангелоподобные стражи закона. Ауры порядка, щиты из энергии.' },
-      { key:'skriby', name:'Скрибы', rune:'Знание', rclass:'rune-memory', aclass:'aura-memory', meta:'Демиургион', desc:'Хранители знаний. Тела в рунах-записях. Торгуют информацией.' },
-      { key:'mimezoki', name:'Мимезоки', rune:'Подражание', rclass:'rune-shadow', aclass:'aura-shadow', meta:'Демиургион', desc:'Раса-отражение. Копируют облик и способности врагов.' },
-      { key:'kristallidy', name:'Кристаллиды', rune:'Гармония', rclass:'rune-geometry', aclass:'aura-geometry', meta:'Зазеркалье', desc:'Из живого кристалла. Меняют структуру пространства.' },
-      { key:'cheshir', name:'Чеширские Коты', rune:'Мистификация', rclass:'rune-dream', aclass:'aura-dream', meta:'Зазеркалье', desc:'Мастера иллюзий. Исчезают, оставляя только улыбку.' },
-      { key:'vambraly', name:'Вамбралы', rune:'Иллюзия', rclass:'rune-shadow', aclass:'aura-shadow', meta:'Зазеркалье', desc:'Тени, притворяющиеся реальностью. Двойники и иллюзии.' },
-      { key:'ekho', name:'Эхо', rune:'Отражение', rclass:'rune-sound', aclass:'aura-sound', meta:'Зазеркалье', desc:'Пустые оболочки. Копируют руны убитых врагов.' },
-      { key:'lyudi', name:'Люди («Дети Узора»)', rune:'Адаптация', rclass:'rune-unique', aclass:'aura-unique', meta:'весь мир', desc:'Не имеют своей руны, но могут изучать и адаптировать любые.' },
-      { key:'barduki', name:'Бардуки', rune:'Хмель', rclass:'rune-sound', aclass:'aura-sound', meta:'Гастрон', desc:'Низкорослые подземные жители. Пивоварение, музыка, братство.' },
-      { key:'sifidy', name:'Сифиды', rune:'Резонанс', rclass:'rune-essence', aclass:'aura-essence', meta:'Церебрум', desc:'Существа из чистой магии. Усиливают руны через созвучия.' },
-      { key:'geomanty', name:'Геоманты', rune:'Земля', rclass:'rune-earth', aclass:'aura-earth', meta:'Аурелия, Гепар', desc:'Родились из слезы Ноасиса. Повелевают камнем и почвой.' },
-      { key:'ksenofagi', name:'Ксенофаги', rune:'Пожиратель', rclass:'rune-death', aclass:'aura-death', meta:'Гастрон', desc:'Пожирают руны. Бесформенные тела с пастями.' },
-      { key:'sarkofagi', name:'Саркофаги', rune:'Смерть', rclass:'rune-death', aclass:'aura-death', meta:'Некрополис, Гастрон', desc:'Грибницы в мёртвых телах. Древние знания мёртвых.' },
-      { key:'umbraly', name:'Умбралы', rune:'Тьма/Тень/Смерть', rclass:'rune-darkness', aclass:'aura-darkness', meta:'Трещины Полотна', desc:'Пятна незаполненного пространства. Сама являются руной.' },
-      { key:'gremliny', name:'Гремлины', rune:'Хаос', rclass:'rune-unique', aclass:'aura-unique', meta:'Разломы реальности', desc:'Существа хаоса. Ломают механизмы, искажают руны.' }
+      { key:'tenekhody', name:'Тенеходы', rune:'Тень', rclass:'rune-shadow', aclass:'aura-shadow', homeland:'Гепар, Сомнум', desc:'Первая раса, созданная Садовником Артаком. Их тела частично сливаются с тенями.' },
+      { key:'khitony', name:'Хитоны', rune:'—', rclass:'rune-unique', aclass:'aura-unique', homeland:'Ксилотроп', desc:'Насекомоподобная раса с хитиновым панцирем. Коллективный разум.' },
+      { key:'troglodyty', name:'Троглодиты', rune:'Камень', rclass:'rune-earth', aclass:'aura-earth', homeland:'Гепар, Гастрон', desc:'Коренастые подземные жители с каменной кожей и геомантическим чутьём.' },
+      { key:'veily', name:'Вейлы', rune:'Природа', rclass:'rune-life', aclass:'aura-life', homeland:'Ксилотроп, Гепар', desc:'Эльфоподобная раса в симбиозе с природой. Слышат шепот деревьев.' },
+      { key:'sikhar', name:'Сихарь', rune:'Псионика', rclass:'rune-unique', aclass:'aura-unique', homeland:'Церебрум', desc:'Псионическая раса с телепатией и телекинезом.' },
+      { key:'drevolyudi', name:'Древолюди', rune:'Гигантизм', rclass:'rune-rage', aclass:'aura-rage', homeland:'Ксилотроп', desc:'Гиганты трёхметрового роста с колоссальной силой.' },
+      { key:'sikhari', name:'Сихарри', rune:'Амбиция', rclass:'rune-unique', aclass:'aura-unique', homeland:'Гепар', desc:'Агрессивная версия псиоников. Жажда власти.' },
+      { key:'vitriks', name:'Витрикс', rune:'Стекло', rclass:'rune-geometry', aclass:'aura-geometry', homeland:'Церебрум', desc:'Кристаллические существа из живого стекла.' },
+      { key:'mikonty', name:'Миконты', rune:'Споры', rclass:'rune-death', aclass:'aura-death', homeland:'Гастрон', desc:'Разумные грибницы. Регенерация, коллективное сознание.' },
+      { key:'nokturny', name:'Ноктурны', rune:'Кровь', rclass:'rune-blood', aclass:'aura-blood', homeland:'Гепар, Сомнум', desc:'Бледнокожие хищники с вампирическими инстинктами.' },
+      { key:'verfolki', name:'Верфолки', rune:'Дикость', rclass:'rune-rage', aclass:'aura-rage', homeland:'Гепар, Вердиган', desc:'Оборотни, трансформирующиеся в звериную форму.' },
+      { key:'kamenevzory', name:'Каменевзоры', rune:'Минерал', rclass:'rune-earth', aclass:'aura-earth', homeland:'Гепар, Аурелия', desc:'Питаются камнями. Кожа в минеральных наростах.' },
+      { key:'yotuny', name:'Йотуны', rune:'Лёд', rclass:'rune-ice', aclass:'aura-ice', homeland:'Сомнус, Гепар', desc:'Ледяные великаны с контролем мороза.' },
+      { key:'piroplasty', name:'Пиропласты', rune:'Огонь', rclass:'rune-fire', aclass:'aura-fire', homeland:'Вердиган, Гастрон', desc:'Огненные слизи из жидкого пламени.' },
+      { key:'golemy', name:'Големы Горма', rune:'Механика', rclass:'rune-metal', aclass:'aura-metal', homeland:'Вердиган', desc:'Разумные статуи из камня и металла.' },
+      { key:'kukly', name:'Куклы Кошмара', rune:'Марионетка', rclass:'rune-darkness', aclass:'aura-darkness', homeland:'Сомнум', desc:'Ожившие марионетки из плоти. Не знают страха.' },
+      { key:'kaimely', name:'Каймелы', rune:'Демон', rclass:'rune-rage', aclass:'aura-rage', homeland:'Демиургион', desc:'Демоническая раса. Рога, хвост, красная кожа.' },
+      { key:'arkhonty', name:'Архонты', rune:'Порядок', rclass:'rune-light', aclass:'aura-light', homeland:'Демиургион', desc:'Ангелоподобные стражи закона.' },
+      { key:'skriby', name:'Скрибы', rune:'Знание', rclass:'rune-memory', aclass:'aura-memory', homeland:'Демиургион', desc:'Хранители знаний. Тела в рунах-записях.' },
+      { key:'mimezoki', name:'Мимезоки', rune:'Подражание', rclass:'rune-shadow', aclass:'aura-shadow', homeland:'Демиургион', desc:'Раса-отражение. Копируют способности врагов.' },
+      { key:'kristallidy', name:'Кристаллиды', rune:'Гармония', rclass:'rune-geometry', aclass:'aura-geometry', homeland:'Зазеркалье', desc:'Из живого кристалла. Меняют структуру пространства.' },
+      { key:'cheshir', name:'Чеширские Коты', rune:'Мистификация', rclass:'rune-dream', aclass:'aura-dream', homeland:'Зазеркалье', desc:'Мастера иллюзий. Исчезают, оставляя улыбку.' },
+      { key:'vambraly', name:'Вамбралы', rune:'Иллюзия', rclass:'rune-shadow', aclass:'aura-shadow', homeland:'Зазеркалье', desc:'Тени, притворяющиеся реальностью.' },
+      { key:'ekho', name:'Эхо', rune:'Отражение', rclass:'rune-sound', aclass:'aura-sound', homeland:'Зазеркалье', desc:'Пустые оболочки. Копируют руны убитых.' },
+      { key:'lyudi', name:'Люди («Дети Узора»)', rune:'Адаптация', rclass:'rune-unique', aclass:'aura-unique', homeland:'весь мир', desc:'Не имеют своей руны, но могут изучать любые.' },
+      { key:'barduki', name:'Бардуки', rune:'Хмель', rclass:'rune-sound', aclass:'aura-sound', homeland:'Гастрон', desc:'Низкорослые подземные жители. Пивоварение и музыка.' },
+      { key:'sifidy', name:'Сифиды', rune:'Резонанс', rclass:'rune-essence', aclass:'aura-essence', homeland:'Церебрум', desc:'Существа из чистой магии. Усиливают руны.' },
+      { key:'geomanty', name:'Геоманты', rune:'Земля', rclass:'rune-earth', aclass:'aura-earth', homeland:'Аурелия, Гепар', desc:'Повелевают камнем и почвой. Мирные созидатели.' },
+      { key:'ksenofagi', name:'Ксенофаги', rune:'Пожиратель', rclass:'rune-death', aclass:'aura-death', homeland:'Гастрон', desc:'Пожирают руны. Бесформенные тела с пастями.' },
+      { key:'sarkofagi', name:'Саркофаги', rune:'Смерть', rclass:'rune-death', aclass:'aura-death', homeland:'Некрополис, Гастрон', desc:'Грибницы в мёртвых телах. Знания мёртвых.' },
+      { key:'umbraly', name:'Умбралы', rune:'Тьма/Тень/Смерть', rclass:'rune-darkness', aclass:'aura-darkness', homeland:'Трещины Полотна', desc:'Пятна незаполненного пространства.' },
+      { key:'gremliny', name:'Гремлины', rune:'Хаос', rclass:'rune-unique', aclass:'aura-unique', homeland:'Разломы реальности', desc:'Существа хаоса. Ломают механизмы.' }
     ];
 
     const RUNE_FAMILIES = [
@@ -446,14 +392,18 @@
       { name:'Душа', desc:'Связывание душ, обмен, жертва', cls:'rune-soul', aclass:'aura-soul', color:'#cc6666' }
     ];
 
-    let state = { step: 1, race: null, secondRune: null, charName: '' };
+    let state = {
+      step: 1, race: null, secondRune: null,
+      name: '', gender: 'male', age: 20,
+      birthplace: '', description: '', backstory: ''
+    };
 
     function init() {
       buildIndicators();
       buildRaceGrid();
       buildRuneGrid();
+      renderHall();
       showStep(1);
-      document.getElementById('name-input').addEventListener('keydown', e => { if (e.key === 'Enter' && state.charName.trim()) finishCreation(); });
     }
 
     function buildIndicators() {
@@ -467,7 +417,7 @@
         <div class="race-opt ${r.aclass}" data-key="${r.key}" onclick="pickRace('${r.key}')">
           <span class="ro-name">${r.name}</span>
           <span class="ro-rune">Руна: ${r.rune}</span>
-          <span class="ro-meta">${r.meta}</span>
+          <span class="ro-meta">${r.homeland}</span>
         </div>
       `).join('');
     }
@@ -486,7 +436,7 @@
       state.step = n;
       document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
       document.getElementById(`step-${n}`).classList.add('active');
-      document.querySelectorAll('.step-dot').forEach(el => el.classList.remove('active', 'done'));
+      document.querySelectorAll('.step-dot').forEach(el => el.classList.remove('active','done'));
       for (let i = 1; i < n; i++) document.getElementById(`dot-${i}`).classList.add('done');
       document.getElementById(`dot-${n}`).classList.add('active');
     }
@@ -495,6 +445,9 @@
       if (n === 2 && !state.race) return;
       if (n === 3) renderPrimaryRune();
       if (n === 4) { updateRuneGrid(); checkName(); }
+      if (n === 5) { autoFillBirthplace(); checkName(); }
+      if (n === 6) { if (!state.backstory) generateBackstory(); }
+      if (n === 7) renderFinalCard();
       showStep(n);
     }
 
@@ -510,6 +463,9 @@
       if (!r) return;
       state.race = key;
       state.secondRune = null;
+      state.birthplace = '';
+      state.description = '';
+      state.backstory = '';
       document.querySelectorAll('.race-opt').forEach(el => el.classList.remove('chosen'));
       document.querySelector(`.race-opt[data-key="${key}"]`).classList.add('chosen');
       document.getElementById('to-step-2').disabled = false;
@@ -539,8 +495,7 @@
     }
 
     function pickSecondRune(name) {
-      if (state.secondRune === name) { state.secondRune = null; }
-      else { state.secondRune = name; }
+      state.secondRune = (state.secondRune === name) ? null : name;
       document.querySelectorAll('.rune-opt').forEach(el => {
         el.classList.toggle('chosen', el.dataset.name === state.secondRune);
       });
@@ -548,21 +503,95 @@
 
     function skipSecondRune() { state.secondRune = null; goStep(4); }
 
-    function checkName() {
-      const val = document.getElementById('name-input').value.trim();
-      state.charName = val;
-      document.getElementById('finish-btn').disabled = !val;
+    function onNameChange() {
+      state.name = document.getElementById('name-input').value.trim();
+      checkName();
+    }
+    function onGenderChange() { state.gender = document.getElementById('gender-input').value; }
+    function onAgeChange() {
+      state.age = parseInt(document.getElementById('age-input').value) || 20;
+    }
+    function onBirthplaceChange() {
+      state.birthplace = document.getElementById('birthplace-input').value.trim();
+    }
+    function onDescChange() {
+      state.description = document.getElementById('desc-input').value.trim();
+    }
+    function onBackstoryChange() {
+      state.backstory = document.getElementById('backstory-input').value.trim();
     }
 
-    function finishCreation() {
-      const name = state.charName.trim();
-      if (!name) return;
+    function checkName() {
+      const val = document.getElementById('name-input').value.trim();
+      state.name = val;
+      document.getElementById('to-step-5').disabled = !val;
+    }
+
+    function autoFillBirthplace() {
+      const r = RACE_DATA.find(x => x.key === state.race);
+      if (r && !state.birthplace) {
+        state.birthplace = r.homeland;
+        document.getElementById('birthplace-input').value = r.homeland;
+      }
+    }
+
+    function generateBackstory() {
       const r = RACE_DATA.find(x => x.key === state.race);
       if (!r) return;
+      const p = state.gender === 'male' ? { he:'он', his:'его', him:'ему', obj:'его', suf:'' } : { he:'она', his:'её', him:'ей', obj:'её', suf:'а' };
+      const age = state.age;
+      const birthplace = state.birthplace || r.homeland;
+      const name = state.name || 'Собиратель';
+      const rune = r.rune;
+      const runeDesc = (RUNE_FAMILIES.find(f => f.name === r.rune) || {}).desc || '';
 
+      const opens = [
+        `${name} родил${p.suf}ся в ${birthplace}.`,
+        `${name} появил${p.suf}ся на свет в землях ${birthplace}.`,
+        `Судьба привела ${p.obj} в мир в ${birthplace}.`
+      ];
+      const childhoods = [
+        `Среди ${r.name} ${p.he} с детства отличал${p.suf}ся необычной тягой к рунам.`,
+        `Детство ${p.his} прошло среди ${r.name}, где почитали руну ${rune}.`,
+        `С ранних лет ${p.he} чувствовал${p.suf}а связь с ${rune}.`,
+        `Руна ${rune} стала ${p.his} путеводной звездой.`
+      ];
+      const dangers = ['дикарей','хищников','патологии','чудовищ','тёмных сил','бандитов'];
+      const entities = ['тенью','духом','демоном','странником','божественным созданием','призраком'];
+      const events = [
+        `В ${age} лет ${p.he} впервые проявил${p.suf} рунную силу, спасаясь от ${dangers[Math.floor(Math.random()*dangers.length)]}.`,
+        `Когда ${p.he} достиг${p.suf} возраста ${age} лет, старейшины ${r.name} признали ${p.obj} Собирателем.`,
+        `В ${age} лет ${p.he} пережил${p.suf} встречу с ${entities[Math.floor(Math.random()*entities.length)]}, после чего руна ${rune} навсегда вплелась в ${p.his} суть.`,
+        `В ${age} лет ${p.he} нашёл${p.suf} древний рунический камень, который сам выбрал ${p.obj}.`
+      ];
+      if (state.secondRune) {
+        events.push(`Позже ${name} овладел${p.suf} второй руной — ${state.secondRune}, открыв Путь Гармонии.`);
+      }
+      const calls = [
+        `Теперь ${p.he} странствует по Рунезии в поисках новых рун и ответов.`,
+        `С тех пор ${name} ищет ${p.his} путь среди семейств рун.`,
+        `${name} покинул${p.suf} родные земли, чтобы узнать тайны Великого Полотна.`,
+        `Отныне цель ${p.his} — стать величайшим Собирателем Рунезии.`
+      ];
+
+      const parts = [
+        opens[Math.floor(Math.random()*opens.length)],
+        childhoods[Math.floor(Math.random()*childhoods.length)],
+        events[Math.floor(Math.random()*events.length)],
+        calls[Math.floor(Math.random()*calls.length)]
+      ];
+      state.backstory = parts.join('\n\n');
+      document.getElementById('backstory-input').value = state.backstory;
+    }
+
+    function renderFinalCard() {
+      const r = RACE_DATA.find(x => x.key === state.race);
+      if (!r) return;
       const primaryFamily = RUNE_FAMILIES.find(f => f.name === r.rune);
       const auraColor = primaryFamily ? primaryFamily.color : '#555566';
+      const genderLabel = state.gender === 'male' ? 'Муж.' : 'Жен.';
       const runeCount = state.secondRune ? 2 : 1;
+      const path = runeCount === 1 ? 'Путь Мощи' : 'Путь Гармонии';
 
       let runesHtml = `<span class="fc-rune ${r.rclass}">${r.rune}</span>`;
       if (state.secondRune) {
@@ -570,27 +599,173 @@
         runesHtml += `<span class="fc-rune ${sf ? sf.cls : 'rune-unique'}">${state.secondRune}</span>`;
       }
 
-      document.getElementById('final-card').style.setProperty('--aura-color', auraColor);
-      document.getElementById('final-card').className = `final-card ${r.aclass}`;
-      document.getElementById('final-card').innerHTML = `
-        <div class="fc-name">${name}</div>
-        <div class="fc-race">${r.name} · ${r.meta}</div>
-        <div class="fc-runes">${runesHtml}</div>
-        <div class="fc-rune-count">${runeCount === 1 ? 'Путь Мощи (1 руна)' : 'Путь Гармонии (2 руны)'}</div>
-        <div class="fc-desc">${r.desc}</div>
-      `;
+      const card = document.getElementById('final-card');
+      card.style.setProperty('--aura-color', auraColor);
+      card.className = `final-card ${r.aclass}`;
 
-      showStep(5);
+      let html = `<div class="fc-name">${state.name}</div>`;
+      html += `<div class="fc-race">${r.name}</div>`;
+      html += `<div class="fc-details">${genderLabel}, ${state.age} лет · ${r.homeland} · ${path}</div>`;
+      html += `<div class="fc-runes">${runesHtml}</div>`;
+      if (state.birthplace && state.birthplace !== r.homeland) {
+        html += `<div class="fc-section"><h4>✦ Место рождения</h4><p>${state.birthplace}</p></div>`;
+      }
+      if (state.description) {
+        html += `<div class="fc-section"><h4>✦ Описание</h4><p>${state.description}</p></div>`;
+      }
+      if (state.backstory) {
+        html += `<div class="fc-section"><h4>✦ Предыстория</h4><p>${state.backstory}</p></div>`;
+      }
+
+      const saved = document.getElementById('save-btn').dataset.saved;
+      if (saved) html += `<div class="fc-saved">✓ Сохранён в Зале Собирателей</div>`;
+
+      card.innerHTML = html;
+    }
+
+    function saveHero() {
+      const r = RACE_DATA.find(x => x.key === state.race);
+      if (!r || !state.name) return;
+
+      const hero = {
+        id: 'hero_' + Date.now(),
+        name: state.name,
+        raceKey: state.race,
+        race: r.name,
+        gender: state.gender,
+        age: state.age,
+        primaryRune: r.rune,
+        primaryRuneClass: r.rclass,
+        secondRune: state.secondRune,
+        birthplace: state.birthplace || r.homeland,
+        description: state.description,
+        backstory: state.backstory,
+        created: new Date().toISOString()
+      };
+
+      let heroes = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      heroes.unshift(hero);
+      if (heroes.length > 50) heroes = heroes.slice(0, 50);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(heroes));
+
+      document.getElementById('save-btn').dataset.saved = '1';
+      document.getElementById('save-btn').textContent = '✓ Сохранено!';
+      document.getElementById('save-btn').disabled = true;
+
+      renderHall();
+      showSavedIndicator();
+    }
+
+    function renderHall() {
+      const heroes = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      document.getElementById('hall-count').textContent = heroes.length ? `(${heroes.length})` : '(пусто)';
+
+      const grid = document.getElementById('hall-grid');
+      if (!heroes.length) {
+        grid.innerHTML = '<div class="hall-empty">Пока нет сохранённых персонажей. Создай первого!</div>';
+        return;
+      }
+
+      grid.innerHTML = heroes.map((h, idx) => {
+        const runeBadge = `<span class="hc-rune" style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.75rem;background:var(--r${idx}a)">${h.primaryRune}</span>`;
+        const style = `<style>.hc-${idx} { --r${idx}a: ${getRuneColor(h.primaryRuneClass)}; }</style>`;
+        const runes = h.secondRune
+          ? `${runeBadge} <span style="font-size:0.75rem;color:#666">+</span> <span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.75rem;background:${getRuneColor(getRuneClass(h.secondRune))}">${h.secondRune}</span>`
+          : runeBadge;
+        const ageGender = (h.gender === 'male' ? 'Муж.' : 'Жен.') + ', ' + (h.age || '?') + ' лет';
+        return `<div class="hall-card hc-${idx}" onclick="loadHero(${idx})">
+          ${style}
+          <button class="hc-del" onclick="event.stopPropagation();deleteHero(${idx})" title="Удалить">✕</button>
+          <div class="hc-name">${h.name}</div>
+          <div class="hc-meta">${h.race} · ${ageGender}</div>
+          <div class="hc-runes">${runes}</div>
+        </div>`;
+      }).join('');
+    }
+
+    function loadHero(idx) {
+      const heroes = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const h = heroes[idx];
+      if (!h) return;
+
+      state.race = h.raceKey;
+      state.name = h.name;
+      state.gender = h.gender || 'male';
+      state.age = h.age || 20;
+      state.secondRune = h.secondRune || null;
+      state.birthplace = h.birthplace || '';
+      state.description = h.description || '';
+      state.backstory = h.backstory || '';
+
+      document.getElementById('name-input').value = h.name;
+      document.getElementById('gender-input').value = state.gender;
+      document.getElementById('age-input').value = state.age;
+      document.getElementById('birthplace-input').value = state.birthplace;
+      document.getElementById('desc-input').value = state.description;
+      document.getElementById('backstory-input').value = state.backstory;
+
+      document.querySelectorAll('.race-opt').forEach(el => el.classList.remove('chosen'));
+      document.querySelector(`.race-opt[data-key="${h.raceKey}"]`)?.classList.add('chosen');
+
+      document.getElementById('save-btn').dataset.saved = '';
+      document.getElementById('save-btn').textContent = '✧ Сохранить в Зал Собирателей';
+      document.getElementById('save-btn').disabled = false;
+
+      goStep(7);
+      renderFinalCard();
+    }
+
+    function deleteHero(idx) {
+      if (!confirm('Удалить персонажа?')) return;
+      let heroes = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      heroes.splice(idx, 1);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(heroes));
+      renderHall();
+    }
+
+    function showSavedIndicator() {
+      const card = document.getElementById('final-card');
+      if (!card.querySelector('.fc-saved')) {
+        const div = document.createElement('div');
+        div.className = 'fc-saved';
+        div.textContent = '✓ Сохранён в Зале Собирателей';
+        card.appendChild(div);
+      }
+    }
+
+    function getRuneColor(cls) {
+      const map = {
+        'rune-fire':'#cc3300','rune-water':'#3399cc','rune-ice':'#4488dd','rune-earth':'#8b6914',
+        'rune-air':'#8899bb','rune-blood':'#990000','rune-shadow':'#7b2d8e','rune-light':'#ccaa33',
+        'rune-darkness':'#330033','rune-life':'#228b22','rune-death':'#555555','rune-bone':'#999988',
+        'rune-rage':'#cc5500','rune-protection':'#778899','rune-essence':'#228888','rune-memory':'#b8960f',
+        'rune-dream':'#664488','rune-geometry':'#228855','rune-sound':'#7777aa','rune-flesh':'#cc5577',
+        'rune-metal':'#666677','rune-soul':'#cc6666'
+      };
+      return map[cls] || '#555566';
+    }
+
+    function getRuneClass(name) {
+      const f = RUNE_FAMILIES.find(x => x.name === name);
+      return f ? f.cls : 'rune-unique';
     }
 
     function resetAll() {
-      state = { step: 1, race: null, secondRune: null, charName: '' };
+      state = { step:1, race:null, secondRune:null, name:'', gender:'male', age:20, birthplace:'', description:'', backstory:'' };
       document.querySelectorAll('.race-opt').forEach(el => el.classList.remove('chosen'));
       document.querySelectorAll('.rune-opt').forEach(el => el.classList.remove('chosen'));
       document.getElementById('race-search').value = '';
       document.getElementById('name-input').value = '';
+      document.getElementById('gender-input').value = 'male';
+      document.getElementById('age-input').value = '20';
+      document.getElementById('birthplace-input').value = '';
+      document.getElementById('desc-input').value = '';
+      document.getElementById('backstory-input').value = '';
       document.getElementById('to-step-2').disabled = true;
-      document.getElementById('finish-btn').disabled = true;
+      document.getElementById('to-step-5').disabled = true;
+      document.getElementById('save-btn').dataset.saved = '';
+      document.getElementById('save-btn').textContent = '✧ Сохранить в Зал Собирателей';
+      document.getElementById('save-btn').disabled = false;
       document.querySelectorAll('.race-opt').forEach(el => el.style.display = '');
       showStep(1);
     }
