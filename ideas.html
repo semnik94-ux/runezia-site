@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Предложить идею — Рунезия</title>
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">✦ Рунезия</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="wiki/index.html">Вики</a></li>
+        <li><a href="gallery.html">Галерея</a></li>
+        <li><a href="ideas.html">Идеи</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Предложить идею</h1>
+      <p>Поделись своей задумкой для мира Рунезии. Идеи сохраняются локально в браузере.</p>
+    </div>
+
+    <div class="form-section">
+      <div id="success-message" class="success-message">Идея сохранена!</div>
+
+      <form id="idea-form">
+        <div class="form-group">
+          <label for="idea-title">Название идеи</label>
+          <input type="text" id="idea-title" placeholder="Например: Новый вид врага" required>
+        </div>
+
+        <div class="form-group">
+          <label for="idea-category">Категория</label>
+          <select id="idea-category">
+            <option value="Лор/История">Лор / История</option>
+            <option value="Руны/Магия">Руны / Магия</option>
+            <option value="Существа">Существа</option>
+            <option value="Локации">Локации</option>
+            <option value="Геймплей">Геймплей</option>
+            <option value="Другое">Другое</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="idea-desc">Описание</label>
+          <textarea id="idea-desc" placeholder="Распиши свою идею подробнее..." required></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">Отправить идею</button>
+      </form>
+    </div>
+
+    <div class="ideas-list">
+      <h2>Ранее предложенные идеи</h2>
+      <div id="ideas-container"></div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <p>&copy; 2026 Рунезия. Сайт создан фанатами для фанатов.</p>
+    </div>
+  </footer>
+
+  <script src="scripts/main.js"></script>
+</body>
+</html>
