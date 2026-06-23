@@ -55,10 +55,34 @@ function onScrollParallax() {
 }
 
 // ============================================================
-// 2. FLOATING RUNE DECORATIONS — 60 runes across viewport
+// 2. FLOATING RUNE DECORATIONS — 60 runes mapped to 22 families
 // ============================================================
-const RUNE_CHARS = ['ᚠ','ᚢ','ᚦ','ᚨ','ᚱ','ᚲ','ᚷ','ᚹ','ᚺ','ᚾ','ᛁ','ᛃ','ᛇ','ᛈ','ᛉ','ᛊ','ᛏ','ᛒ','ᛖ','ᛗ','ᛚ','ᛝ','ᛟ','ᛞ'];
-const RUNE_FLOAT_COLORS = ['#cc3300','#3399cc','#4488dd','#8b6914','#8899bb','#990000','#7b2d8e','#ccaa33','#330033','#228b22','#555555','#999988','#cc5500','#778899','#228888','#b8960f','#664488','#228855','#7777aa','#cc5577','#666677','#cc6666'];
+const RUNE_FAMILY_MAP = [
+  { rune:'ᚠ', family:'Металл', color:'#666677' },
+  { rune:'ᚢ', family:'Ярость', color:'#cc5500' },
+  { rune:'ᚦ', family:'Геометрия', color:'#228855' },
+  { rune:'ᚨ', family:'Тьма', color:'#330033' },
+  { rune:'ᚱ', family:'Воздух', color:'#8899bb' },
+  { rune:'ᚲ', family:'Огонь', color:'#cc3300' },
+  { rune:'ᚷ', family:'Эссенция', color:'#228888' },
+  { rune:'ᚹ', family:'Кровь', color:'#990000' },
+  { rune:'ᚺ', family:'Лёд', color:'#4488dd' },
+  { rune:'ᚾ', family:'Смерть', color:'#555555' },
+  { rune:'ᛁ', family:'Вода', color:'#3399cc' },
+  { rune:'ᛃ', family:'Жизнь', color:'#228b22' },
+  { rune:'ᛇ', family:'Земля', color:'#8b6914' },
+  { rune:'ᛈ', family:'Тень', color:'#7b2d8e' },
+  { rune:'ᛉ', family:'Кость', color:'#999988' },
+  { rune:'ᛊ', family:'Свет', color:'#ccaa33' },
+  { rune:'ᛏ', family:'Защита', color:'#778899' },
+  { rune:'ᛒ', family:'Плоть', color:'#cc5577' },
+  { rune:'ᛖ', family:'Звук', color:'#7777aa' },
+  { rune:'ᛗ', family:'Сон', color:'#664488' },
+  { rune:'ᛚ', family:'Память', color:'#b8960f' },
+  { rune:'ᛝ', family:'Душа', color:'#cc6666' },
+  { rune:'ᛟ', family:'Защита', color:'#778899' },
+  { rune:'ᛞ', family:'Геометрия', color:'#228855' },
+];
 
 function initRuneDecorations() {
   const style = document.createElement('style');
@@ -80,8 +104,10 @@ function initRuneDecorations() {
   for (let i = 0; i < 60; i++) {
     const el = document.createElement('div');
     el.className = 'rune-float';
-    el.textContent = RUNE_CHARS[i % RUNE_CHARS.length];
-    const color = RUNE_FLOAT_COLORS[Math.floor(Math.random() * RUNE_FLOAT_COLORS.length)];
+    const entry = RUNE_FAMILY_MAP[Math.floor(Math.random() * RUNE_FAMILY_MAP.length)];
+    el.textContent = entry.rune;
+    el.dataset.family = entry.family;
+    const color = entry.color;
     const isLeft = Math.random() > 0.5;
     el.style.cssText = `
       ${isLeft ? 'left' : 'right'}:${2 + Math.random() * (isLeft ? 20 : 68)}%;
@@ -153,7 +179,8 @@ function initCosmicDust() {
       const p = document.createElement('div');
       p.className = 'dust-particle';
       const size = 1.5 + Math.random() * 3;
-      const dustColor = RUNE_FLOAT_COLORS[Math.floor(Math.random() * RUNE_FLOAT_COLORS.length)];
+      const dustEntry = RUNE_FAMILY_MAP[Math.floor(Math.random() * RUNE_FAMILY_MAP.length)];
+      const dustColor = dustEntry.color;
       p.style.cssText = `
         left:${e.clientX + (Math.random() - 0.5) * 40}px;
         top:${e.clientY + (Math.random() - 0.5) * 40}px;
