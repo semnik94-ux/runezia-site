@@ -1393,6 +1393,16 @@ html { scroll-behavior: smooth; }
   transform: translateY(-1px);
 }
 
+/* ===== RUNE GLYPH ON FAMILY CARDS ===== */
+.rune-glyph {
+  font-family: serif;
+  font-size: 1.3em;
+  margin-right: 6px;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
   .hero h1 { font-size: 2.2rem; }

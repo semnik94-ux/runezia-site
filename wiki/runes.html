@@ -199,6 +199,12 @@
         if (!family) return;
         card.style.borderLeft = '3px solid ' + family.aura;
         card.style.boxShadow = '0 0 24px ' + family.aura + '22';
+        if (typeof RUNE_FAMILY_MAP !== 'undefined') {
+          var entry = RUNE_FAMILY_MAP.find(function(e) { return e.family === family.name; });
+          if (entry) {
+            name.innerHTML = '<span class="rune-glyph">' + entry.rune + '</span> ' + name.textContent.trim();
+          }
+        }
       });
     });
   </script>
