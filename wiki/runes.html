@@ -187,7 +187,21 @@
       <p>&copy; 2026 Рунезия. Сайт создан фанатами для фанатов.</p>
     </div>
   </footer>
+  <script src="../scripts/wiki-data.js"></script>
   <script src="../scripts/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof RUNE_FAMILIES === 'undefined') return;
+      document.querySelectorAll('.rune-search-item.card').forEach(function(card) {
+        var name = card.querySelector('h3');
+        if (!name) return;
+        var family = RUNE_FAMILIES.find(function(f) { return f.name === name.textContent.trim(); });
+        if (!family) return;
+        card.style.borderLeft = '3px solid ' + family.aura;
+        card.style.boxShadow = '0 0 24px ' + family.aura + '22';
+      });
+    });
+  </script>
 </body>
 </html>
 

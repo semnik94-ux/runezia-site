@@ -166,6 +166,9 @@
       <a href="index.html" class="back-link">← Назад к вики</a>
       <h1>Создание персонажа</h1>
       <p>Создай своего Собирателя рун и сохрани в Зал Героев.</p>
+      <div style="margin-top:12px">
+        <button class="btn btn-primary" onclick="randomHero()" style="padding:10px 24px;font-size:0.9rem">🎲 Случайный герой</button>
+      </div>
     </div>
 
     <div class="cross-ref">
@@ -733,6 +736,43 @@
       document.getElementById('save-btn').disabled = false;
       document.querySelectorAll('.race-opt').forEach(el => el.style.display = '');
       showStep(1);
+    }
+
+    function randomHero() {
+      const race = RACE_DATA[Math.floor(Math.random() * RACE_DATA.length)];
+      pickRace(race.key);
+
+      if (Math.random() < 0.5) {
+        const others = RUNE_FAMILIES.filter(function(f) { return f.name !== race.rune; });
+        if (others.length) pickSecondRune(others[Math.floor(Math.random() * others.length)].name);
+      }
+
+      var MALE_NAMES = ['Арден','Борин','Кассиан','Дурник','Элдрик','Фенрис','Горат','Харкон','Итар','Йорунд','Каэль','Лорат','Малрик','Норд','Орин','Пирр','Квин','Рагнар','Сорен','Торвин','Ульрик','Варик','Вульф','Ксандар','Имир','Зефир'];
+      var FEMALE_NAMES = ['Астра','Брин','Калиста','Дара','Элара','Фрей','Грета','Хильда','Изольда','Йора','Кира','Лира','Мира','Никс','Ори','Петра','Равенна','Сигрид','Тала','Ума','Вара','Рен','Ксена','Ирса','Зара'];
+      var gender = Math.random() < 0.5 ? 'male' : 'female';
+      var namePool = gender === 'male' ? MALE_NAMES : FEMALE_NAMES;
+      var name = namePool[Math.floor(Math.random() * namePool.length)];
+
+      state.gender = gender;
+      state.name = name;
+      state.age = Math.floor(Math.random() * 70) + 16;
+      document.getElementById('gender-input').value = gender;
+      document.getElementById('name-input').value = name;
+      document.getElementById('age-input').value = state.age;
+
+      var locs = document.querySelectorAll('#location-list option');
+      var locArr = [];
+      for (var i = 0; i < locs.length; i++) locArr.push(locs[i].value);
+      state.birthplace = locArr[Math.floor(Math.random() * locArr.length)];
+      document.getElementById('birthplace-input').value = state.birthplace;
+
+      var DESC_OPTIONS = ['Высокий и статный, с острым взглядом.','Невысокий, но коренастый. Спокойный и рассудительный.','Худощавый, с быстрыми движениями. Вечно улыбается.','Массивный, с грубыми чертами лица. Немногословный.','Изящный, с длинными волосами и мелодичным голосом.','Широкоплечий, с мозолистыми руками. Ценит труд.','С пронзительными глазами и тихой походкой. Наблюдательный.'];
+      state.description = DESC_OPTIONS[Math.floor(Math.random() * DESC_OPTIONS.length)];
+      document.getElementById('desc-input').value = state.description;
+      document.getElementById('to-step-5').disabled = false;
+
+      generateBackstory();
+      goStep(7);
     }
 
     document.addEventListener('DOMContentLoaded', init);
