@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Создание персонажа в мире Рунезии — выбери расу, узнай её исконную руну и историю.">
+  <meta property="og:title" content="Создание персонажа — Вики Рунезии">
+  <meta property="og:description" content="Выбери расу — каждая несёт свою исконную руну.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <title>Создание персонажа — Вики Рунезии</title>
+  <link rel="stylesheet" href="../styles/style.css">
+  <style>
+    .creation-selected {
+      background: linear-gradient(135deg, rgba(232,197,71,0.1), rgba(232,197,71,0.02));
+      border: 1px solid rgba(232,197,71,0.3);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+      display: none;
+    }
+    .creation-selected.visible { display: block; }
+    .creation-selected .sel-race { color: #e8c547; font-family: 'Cinzel', serif; font-size: 1.4rem; }
+    .creation-selected .sel-rune {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    .race-card {
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .race-card:hover {
+      border-color: rgba(232,197,71,0.4);
+      transform: translateY(-2px);
+    }
+    .race-card.selected {
+      border-color: #e8c547;
+      background: linear-gradient(135deg, rgba(232,197,71,0.08), transparent);
+    }
+    .race-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .race-rune-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #fff;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .race-rune-badge:hover { opacity: 0.85; }
+    .rune-fire { background: #cc3300; }
+    .rune-water { background: #3399cc; }
+    .rune-ice { background: #4488dd; }
+    .rune-earth { background: #8b6914; }
+    .rune-air { background: #8899bb; }
+    .rune-blood { background: #990000; }
+    .rune-shadow { background: #7b2d8e; }
+    .rune-light { background: #ccaa33; color: #222; }
+    .rune-darkness { background: #330033; }
+    .rune-life { background: #228b22; }
+    .rune-death { background: #555555; }
+    .rune-bone { background: #999988; color: #222; }
+    .rune-rage { background: #cc5500; }
+    .rune-protection { background: #778899; }
+    .rune-essence { background: #228888; }
+    .rune-memory { background: #b8960f; }
+    .rune-dream { background: #664488; }
+    .rune-geometry { background: #228855; }
+    .rune-sound { background: #7777aa; }
+    .rune-flesh { background: #cc5577; }
+    .rune-metal { background: #666677; }
+    .rune-soul { background: #cc6666; }
+    .rune-unique { background: #555566; }
+    .race-meta { color: #8888aa; font-size: 0.9rem; margin-bottom: 6px; }
+    .race-meta strong { color: #bbbbdd; }
+    .race-desc { color: #bbb; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="../index.html" class="logo">✦ Рунезия</a>
+      <ul class="nav-links">
+        <li><a href="../index.html">Главная</a></li>
+        <li><a href="../wiki/index.html">Вики</a></li>
+        <li><a href="../gallery.html">Галерея</a></li>
+        <li><a href="../ideas.html">Идеи</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-header">
+      <a href="index.html" class="back-link">← Назад к вики</a>
+      <h1>Создание персонажа</h1>
+      <p>Выбери расу — каждая несёт свою исконную руну.</p>
+    </div>
+
+    <div class="cross-ref">
+      <span class="cross-ref-label">Смотрите также:</span>
+      <a href="races.html">Все расы</a>
+      <a href="runes.html">Семейства рун</a>
+      <a href="runes_detailed.html">Система рун</a>
+      <a href="world.html">Мир и лор</a>
+    </div>
+
+    <div class="article">
+
+      <div id="sel-panel" class="creation-selected">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span id="sel-rune-badge" class="sel-rune">—</span>
+          <span id="sel-race-name" class="sel-race">—</span>
+        </div>
+        <p id="sel-race-meta" style="margin-top:8px;color:#8888aa"></p>
+        <p id="sel-race-desc" style="margin-top:6px;color:#bbb"></p>
+      </div>
+
+      <p>Каждая раса Рунезии родилась с руной, вплетённой в её суть. Одни произошли от божественных творцов, другие — из самого Полотна реальности. Выбери свой путь.</p>
+
+      <!-- ===== САДОВНИК АРТАК ===== -->
+      <h2>Творения Садовника Артака</h2>
+      <p class="lore-intro">Артак — первый Собиратель. Его философия — контролируемая эволюция. Он создавал расы в биологических инкубаторах, выращивая их как саженцы.</p>
+
+      <div class="race-card card" data-race="tenekhody" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Тенеходы</h3>
+          <a href="runes.html#тень" class="race-rune-badge rune-shadow">Тень</a>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Гепар, Сомнум</div>
+        <div class="race-desc">Первая раса, созданная Артаком. Их тела частично сливаются с тенями, позволяя бесшумно скользить в темноте. Идеальные ночные охотники.</div>
+      </div>
+
+      <div class="race-card card" data-race="khitony" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Хитоны</h3>
+          <span class="race-rune-badge rune-unique">—</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Ксилотроп</div>
+        <div class="race-desc">Насекомоподобная раса с шестью конечностями и хитиновым панцирем. Коллективный разум и абсолютная преданность колонии.</div>
+      </div>
+
+      <div class="race-card card" data-race="troglodyty" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Троглодиты</h3>
+          <span class="race-rune-badge rune-earth">Камень</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Гепар, Гастрон</div>
+        <div class="race-desc">Коренастые подземные жители с каменной кожей и геомантическим чутьём. Прирождённые строители туннелей и шахтёры.</div>
+      </div>
+
+      <div class="race-card card" data-race="veily" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Вейлы</h3>
+          <span class="race-rune-badge rune-life">Природа</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Ксилотроп, Гепар</div>
+        <div class="race-desc">Эльфоподобная раса в симбиозе с природой. Чувствуют боль живых существ, слышат шепот деревьев и понимают язык зверей.</div>
+      </div>
+
+      <div class="race-card card" data-race="sikhar" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Сихарь</h3>
+          <span class="race-rune-badge rune-unique">Псионика</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Церебрум</div>
+        <div class="race-desc">Псионическая раса с телепатией, ментальной связью и телекинезом. Меритократия, где статус определяется силой разума.</div>
+      </div>
+
+      <!-- ===== АЛХИМИК ОРЛАН ===== -->
+      <h2>Творения Алхимика Орлана</h2>
+      <p class="lore-intro">Орлан — второй Собиратель. Его метод — направленная эволюция: он брал существующие формы и «облагораживал» их руническими усилениями.</p>
+
+      <div class="race-card card" data-race="drevolyudi" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Древолюди</h3>
+          <span class="race-rune-badge rune-rage">Гигантизм</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Ксилотроп</div>
+        <div class="race-desc">Гиганты трёхметрового роста с колоссальной силой и выносливостью. Считаются предками многих современных рас.</div>
+      </div>
+
+      <div class="race-card card" data-race="sikhari" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Сихарри (Сихари)</h3>
+          <span class="race-rune-badge rune-unique">Амбиция</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Гепар</div>
+        <div class="race-desc">Версия псионической расы от Орлана. Более агрессивны и амбициозны, с жаждой власти и доминирования.</div>
+      </div>
+
+      <div class="race-card card" data-race="vitriks" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Витрикс</h3>
+          <span class="race-rune-badge rune-geometry">Стекло</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Церебрум</div>
+        <div class="race-desc">Кристаллические существа из живого стекла. Полупрозрачны, невероятно ловки, но хрупки.</div>
+      </div>
+
+      <div class="race-card card" data-race="mikonty" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Миконты</h3>
+          <span class="race-rune-badge rune-death">Споры</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Гастрон</div>
+        <div class="race-desc">Разумные грибницы, общающиеся через споровые сети. Тела из мицелия, способного регенерировать от любого повреждения.</div>
+      </div>
+
+      <!-- ===== КЕЛАН-МАНИПУЛЯТОР ===== -->
+      <h2>Творения Келана-Манипулятора</h2>
+      <p class="lore-intro">Келан — гибрид человека и стригоя. Его метод — биомантия и хаос. Он смешивал ДНК разных видов, создавая непредсказуемые формы жизни.</p>
+
+      <div class="race-card card" data-race="nokturny" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Ноктурны</h3>
+          <a href="runes.html#кровь" class="race-rune-badge rune-blood">Кровь</a>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Гепар, Сомнум</div>
+        <div class="race-desc">Бледнокожие гуманоиды с красными глазами. Вампирические инстинкты, эхолокация, скорость и смертоносность в ближнем бою.</div>
+      </div>
+
+      <div class="race-card card" data-race="verfolki" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Верфолки</h3>
+          <span class="race-rune-badge rune-rage">Дикость</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Гепар, Вердиган</div>
+        <div class="race-desc">Оборотни, трансформирующиеся в звериную форму. Общество — стая с вожаком. Невероятная сила и скорость в ущерб контролю.</div>
+      </div>
+
+      <div class="race-card card" data-race="kamenevzory" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Каменевзоры</h3>
+          <span class="race-rune-badge rune-earth">Минерал</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Гепар, Аурелия</div>
+        <div class="race-desc">Питаются камнями и минералами. Кожа покрыта минеральными наростами. Мирные, но опасны при защите территорий.</div>
+      </div>
+
+      <div class="race-card card" data-race="yotuny" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Йотуны</h3>
+          <a href="runes.html#лёд" class="race-rune-badge rune-ice">Лёд</a>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Сомнус, Гепар</div>
+        <div class="race-desc">Ледяные великаны четырёх метров высотой. Контроль над морозом, тела покрыты инеем и кристаллами льда.</div>
+      </div>
+
+      <div class="race-card card" data-race="piroplasty" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Пиропласты</h3>
+          <a href="runes.html#огонь" class="race-rune-badge rune-fire">Огонь</a>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Вердиган, Гастрон</div>
+        <div class="race-desc">Огненные слизи из жидкого пламени. Не имеют формы, иммунны к огню, поджигают всё вокруг.</div>
+      </div>
+
+      <!-- ===== ГОРМ ГОЛЕМОСТРОИТЕЛЬ ===== -->
+      <h2>Творения Горма Големостроителя</h2>
+      <p class="lore-intro">Горм — бардук-затворник. Его удел — механика и оживление неживого через руны и древние технологии.</p>
+
+      <div class="race-card card" data-race="golemy" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Големы Горма</h3>
+          <span class="race-rune-badge rune-metal">Механика</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Вердиган</div>
+        <div class="race-desc">Разумные статуи из камня и металла. Модульная конструкция, руническое ядро — душа. Строгая иерархия.</div>
+      </div>
+
+      <div class="race-card card" data-race="kukly" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Куклы Кошмара</h3>
+          <span class="race-rune-badge rune-darkness">Марионетка</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Сомнум</div>
+        <div class="race-desc">Ожившие марионетки из плоти и дерева. Не чувствуют боли, не знают страха. Созданы для войны.</div>
+      </div>
+
+      <!-- ===== ЗОРЕТ ЛЮМИС ===== -->
+      <h2>Творения Зорета Люмиса</h2>
+      <p class="lore-intro">Зорет Люмис — Верховный Демон, правитель Демиургиона. Его творение — через страдание, из собственной демонической сущности.</p>
+
+      <div class="race-card card" data-race="kaimely" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Каймелы</h3>
+          <span class="race-rune-badge rune-rage">Демон</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Демиургион</div>
+        <div class="race-desc">Прямые потомки Зорета. Рога, хвост, красная кожа. Способны к демонической трансформации — высвобождению истинной формы.</div>
+      </div>
+
+      <div class="race-card card" data-race="arkhonty" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Архонты</h3>
+          <span class="race-rune-badge rune-light">Порядок</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Демиургион</div>
+        <div class="race-desc">Ангелоподобные стражи космического закона. Ауры порядка, светящиеся доспехи, щиты из чистой энергии.</div>
+      </div>
+
+      <div class="race-card card" data-race="skriby" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Скрибы</h3>
+          <span class="race-rune-badge rune-memory">Знание</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Демиургион</div>
+        <div class="race-desc">Хранители знаний. Тела исписаны рунами-записями. Торгуют информацией, цена всегда высока.</div>
+      </div>
+
+      <div class="race-card card" data-race="mimezoki" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Мимезоки</h3>
+          <span class="race-rune-badge rune-shadow">Подражание</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Демиургион</div>
+        <div class="race-desc">Раса-отражение. Копируют облик и способности врагов. Истинная форма неизвестна.</div>
+      </div>
+
+      <!-- ===== ЗАЗЕРКАЛЬЕ ===== -->
+      <h2>Расы Зазеркалья</h2>
+      <p class="lore-intro">Зазеркалье — искажённая копия реальности. Его расы — отражения существующего, преломлённые через хаос.</p>
+
+      <div class="race-card card" data-race="kristallidy" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Кристаллиды</h3>
+          <span class="race-rune-badge rune-geometry">Гармония</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Зазеркалье</div>
+        <div class="race-desc">Существа из живого кристалла, изменяющие структуру пространства. Строят мосты между мирами.</div>
+      </div>
+
+      <div class="race-card card" data-race="cheshir" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Чеширские Коты</h3>
+          <span class="race-rune-badge rune-dream">Мистификация</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Зазеркалье</div>
+        <div class="race-desc">Мастера иллюзий и скрытности. Могут становиться невидимыми, оставляя видимой только улыбку.</div>
+      </div>
+
+      <div class="race-card card" data-race="vambraly" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Вамбралы</h3>
+          <span class="race-rune-badge rune-shadow">Иллюзия</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Зазеркалье</div>
+        <div class="race-desc">Тени, притворяющиеся реальностью. Создают иллюзорных двойников. Внешность постоянно меняется.</div>
+      </div>
+
+      <div class="race-card card" data-race="ekho" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Эхо</h3>
+          <span class="race-rune-badge rune-sound">Отражение</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Зазеркалье</div>
+        <div class="race-desc">Пустые оболочки, впитывающие сущность других. Копируют руны убитых врагов.</div>
+      </div>
+
+      <!-- ===== КОРЕННЫЕ ОБИТАТЕЛИ ===== -->
+      <h2>Коренные обитатели Рунезии</h2>
+      <p class="lore-intro">Эти расы не созданы Собирателями. Они возникли из самого Полотна — материи мироздания, из которой ткётся реальность.</p>
+
+      <div class="race-card card" data-race="lyudi" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Люди («Дети Узора»)</h3>
+          <span class="race-rune-badge rune-unique">Адаптация</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> весь мир</div>
+        <div class="race-desc">Не имеют собственной руны, но могут изучать и адаптировать любые. Самая распространённая и приспосабливаемая раса Рунезии.</div>
+      </div>
+
+      <div class="race-card card" data-race="barduki" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Бардуки</h3>
+          <span class="race-rune-badge rune-sound">Хмель</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Гастрон</div>
+        <div class="race-desc">Низкорослые, жизнерадостные подземные жители. Пивоварение, музыка, застолья и братство. Отличные воины.</div>
+      </div>
+
+      <div class="race-card card" data-race="sifidy" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Сифиды</h3>
+          <span class="race-rune-badge rune-essence">Резонанс</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Церебрум</div>
+        <div class="race-desc">Полупрозрачные существа из чистой магии. Усиливают руны союзников через созвучия. Древнейшая раса.</div>
+      </div>
+
+      <div class="race-card card" data-race="geomanty" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Геоманты</h3>
+          <a href="runes.html#земля" class="race-rune-badge rune-earth">Земля</a>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Аурелия, Гепар</div>
+        <div class="race-desc">Родились из слезы бога земли Ноасиса. Повелевают камнем и почвой. Мирные созидатели.</div>
+      </div>
+
+      <div class="race-card card" data-race="ksenofagi" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Ксенофаги</h3>
+          <span class="race-rune-badge rune-death">Пожиратель</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Гастрон</div>
+        <div class="race-desc">Аберрации с ненасытным аппетитом. Могут пожирать руны, впитывая их силу.</div>
+      </div>
+
+      <div class="race-card card" data-race="sarkofagi" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Саркофаги</h3>
+          <a href="runes.html#смерть" class="race-rune-badge rune-death">Смерть</a>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Некрополис, Гастрон</div>
+        <div class="race-desc">Разумные грибницы в мёртвых телах. Обладают древними знаниями через слияние с воспоминаниями мёртвых.</div>
+      </div>
+
+      <div class="race-card card" data-race="umbraly" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Умбралы</h3>
+          <span class="race-rune-badge rune-darkness">Тьма / Тень / Забвение / Смерть</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Трещины Полотна</div>
+        <div class="race-desc">Пятна незаполненного пространства на Полотне. Сами являются руной. Редки и непостижимы.</div>
+      </div>
+
+      <div class="race-card card" data-race="gremliny" onclick="selectRace(this)">
+        <div class="race-header">
+          <h3>Гремлины</h3>
+          <span class="race-rune-badge rune-unique">Хаос</span>
+        </div>
+        <div class="race-meta"><strong>Родина:</strong> Разломы реальности</div>
+        <div class="race-desc">Существа чистого хаоса из трещин между мирами. Ломают механизмы, искажают руны, сеют неразбериху.</div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <p>&copy; 2026 Рунезия. Сайт создан фанатами для фанатов.</p>
+    </div>
+  </footer>
+  <script src="../scripts/main.js"></script>
+  <script>
+    const RACE_DATA = {
+      tenekhody: {
+        rune: 'Тень', cls: 'rune-shadow',
+        name: 'Тенеходы',
+        meta: 'Родина: Гепар, Сомнум',
+        desc: 'Первая раса, созданная Садовником Артаком. Их тела частично сливаются с тенями, позволяя бесшумно скользить в темноте. Тенеходы — ночные охотники, превосходно ориентирующиеся в полной темноте. Изначально обитали в пещерах Гепара, но со временем расселились по всему Сомнуму.'
+      },
+      khitony: {
+        rune: '—', cls: 'rune-unique',
+        name: 'Хитоны',
+        meta: 'Родина: Ксилотроп',
+        desc: 'Эксперимент Артака по созданию насекомоподобной жизни. Хитоны обладают шестью конечностями и прочным хитиновым панцирем. Созданы для выживания в смертоносных лесах Ксилотропа. Их общество — улей с коллективным разумом.'
+      },
+      troglodyty: {
+        rune: 'Камень', cls: 'rune-earth',
+        name: 'Троглодиты',
+        meta: 'Родина: Гепар, Гастрон',
+        desc: 'Созданы Артаком как идеальные подземные жители. Коренастые, выносливые, с каменной кожей и геомантическим чутьём — чувствуют вибрации земли за километры. Их города вырезаны прямо в скалах.'
+      },
+      veily: {
+        rune: 'Природа', cls: 'rune-life',
+        name: 'Вейлы',
+        meta: 'Родина: Ксилотроп, Гепар',
+        desc: 'Эльфоподобная раса в симбиозе с природой. Вейлы чувствуют боль живых существ, слышат шепот деревьев и понимают язык зверей. Живут в гармонии с лесами Ксилотропа.'
+      },
+      sikhar: {
+        rune: 'Псионика', cls: 'rune-unique',
+        name: 'Сихарь',
+        meta: 'Родина: Церебрум',
+        desc: 'Псионическая раса Садовника. Мощные телепатические способности: чтение мыслей, ментальная связь, телекинез. Строгая меритократия — статус определяется силой разума.'
+      },
+      drevolyudi: {
+        rune: 'Гигантизм', cls: 'rune-rage',
+        name: 'Древолюди',
+        meta: 'Родина: Ксилотроп',
+        desc: 'Первая попытка Орлана создать идеальный гуманоидный облик. Гиганты трёхметрового роста с колоссальной силой. Их цивилизация пала, но руины находят в глубинах Ксилотропа.'
+      },
+      sikhari: {
+        rune: 'Амбиция', cls: 'rune-unique',
+        name: 'Сихарри (Сихари)',
+        meta: 'Родина: Гепар',
+        desc: 'Версия псионической расы от Орлана. Более агрессивны и амбициозны. Культура построена на доминировании слабых и подчинении сильным.'
+      },
+      vitriks: {
+        rune: 'Стекло', cls: 'rune-geometry',
+        name: 'Витрикс',
+        meta: 'Родина: Церебрум',
+        desc: 'Кристаллическая жизнь от Орлана. Тела из живого стекла — полупрозрачны, переливаются цветами. Невероятная ловкость при хрупкости.'
+      },
+      mikonty: {
+        rune: 'Споры', cls: 'rune-death',
+        name: 'Миконты',
+        meta: 'Родина: Гастрон',
+        desc: 'Грибная раса Орлана. Разумные грибницы через споровые сети. Тела из мицелия, регенерирующего от любого повреждения. Коллективное сознание.'
+      },
+      nokturny: {
+        rune: 'Кровь', cls: 'rune-blood',
+        name: 'Ноктурны',
+        meta: 'Родина: Гепар, Сомнум',
+        desc: 'Созданы Келаном как идеальные ночные хищники. Бледнокожие гуманоиды с красными глазами. Вампирические инстинкты, эхолокация, смертоносны в ближнем бою.'
+      },
+      verfolki: {
+        rune: 'Дикость', cls: 'rune-rage',
+        name: 'Верфолки',
+        meta: 'Родина: Гепар, Вердиган',
+        desc: 'Результат смешения человека и зверя. Оборотни, трансформирующиеся в звериную форму. Невероятная сила и скорость. Общество — стая.'
+      },
+      kamenevzory: {
+        rune: 'Минерал', cls: 'rune-earth',
+        name: 'Каменевзоры',
+        meta: 'Родина: Гепар, Аурелия',
+        desc: 'Раса, питающаяся камнями и минералами. Кожа покрыта минеральными наростами. Мирные, но опасны при защите территорий.'
+      },
+      yotuny: {
+        rune: 'Лёд', cls: 'rune-ice',
+        name: 'Йотуны',
+        meta: 'Родина: Сомнус, Гепар',
+        desc: 'Ледяные великаны Келана. Четыре метра высотой, тела покрыты инеем. Контроль над морозом — замораживают всё прикосновением.'
+      },
+      piroplasty: {
+        rune: 'Огонь', cls: 'rune-fire',
+        name: 'Пиропласты',
+        meta: 'Родина: Вердиган, Гастрон',
+        desc: 'Огненные слизи из жидкого пламени. Не имеют формы, иммунны к огню. Примитивны, но опасны в скоплениях.'
+      },
+      golemy: {
+        rune: 'Механика', cls: 'rune-metal',
+        name: 'Големы Горма',
+        meta: 'Родина: Вердиган',
+        desc: 'Вершина творчества Горма — разумные статуи из камня и металла. Модульная конструкция, руническое ядро-душа. Строгая иерархия.'
+      },
+      kukly: {
+        rune: 'Марионетка', cls: 'rune-darkness',
+        name: 'Куклы Кошмара',
+        meta: 'Родина: Сомнум',
+        desc: 'Ожившие марионетки из плоти и дерева. Не чувствуют боли, не знают страха. Созданы для войны, сосланы в Сомнум.'
+      },
+      kaimely: {
+        rune: 'Демон', cls: 'rune-rage',
+        name: 'Каймелы',
+        meta: 'Родина: Демиургион',
+        desc: 'Прямые потомки Зорета. Рога, хвост, красная кожа. Способны к демонической трансформации. Аристократы Демиургиона.'
+      },
+      arkhonty: {
+        rune: 'Порядок', cls: 'rune-light',
+        name: 'Архонты',
+        meta: 'Родина: Демиургион',
+        desc: 'Стражи космического закона. Ангелоподобные, в светящихся доспехах, со щитами из чистой энергии. Преданны Зорету.'
+      },
+      skriby: {
+        rune: 'Знание', cls: 'rune-memory',
+        name: 'Скрибы',
+        meta: 'Родина: Демиургион',
+        desc: 'Библиотекари Демиургиона. Тела исписаны рунами-записями древних знаний. Торгуют информацией, цена всегда высока.'
+      },
+      mimezoki: {
+        rune: 'Подражание', cls: 'rune-shadow',
+        name: 'Мимезоки',
+        meta: 'Родина: Демиургион',
+        desc: 'Раса-отражение Зорета. Копируют облик и способности врагов. Истинная форма неизвестна. Служат шпионами.'
+      },
+      kristallidy: {
+        rune: 'Гармония', cls: 'rune-geometry',
+        name: 'Кристаллиды',
+        meta: 'Родина: Зазеркалье',
+        desc: 'Существа из живого кристалла. Изменяют структуру пространства, строят мосты между мирами.'
+      },
+      cheshir: {
+        rune: 'Мистификация', cls: 'rune-dream',
+        name: 'Чеширские Коты',
+        meta: 'Родина: Зазеркалье',
+        desc: 'Мастера иллюзий. Становятся невидимыми, оставляя только улыбку. Обожают загадки. Следуют собственной логике.'
+      },
+      vambraly: {
+        rune: 'Иллюзия', cls: 'rune-shadow',
+        name: 'Вамбралы',
+        meta: 'Родина: Зазеркалье',
+        desc: 'Тени, научившиеся притворяться реальностью. Создают иллюзорных двойников. Внешность постоянно меняется.'
+      },
+      ekho: {
+        rune: 'Отражение', cls: 'rune-sound',
+        name: 'Эхо',
+        meta: 'Родина: Зазеркалье',
+        desc: 'Пустые оболочки, впитывающие сущность других. Копируют руны убитых врагов. Неудавшиеся души между миров.'
+      },
+      lyudi: {
+        rune: 'Адаптация', cls: 'rune-unique',
+        name: 'Люди («Дети Узора»)',
+        meta: 'Родина: весь мир',
+        desc: 'Самая загадочная раса. Случайная капля эссенции с пера Рунна. Не имея своей руны, могут изучать и адаптировать любые.'
+      },
+      barduki: {
+        rune: 'Хмель', cls: 'rune-sound',
+        name: 'Бардуки',
+        meta: 'Родина: Гастрон',
+        desc: 'Низкорослые подземные жители. Пивоварение, музыка, застолья и братство. Отличные воины, защищающие свои пивоварни.'
+      },
+      sifidy: {
+        rune: 'Резонанс', cls: 'rune-essence',
+        name: 'Сифиды',
+        meta: 'Родина: Церебрум',
+        desc: 'Из чистой магии. Полупрозрачные, переливающиеся. Усиливают магию союзников через созвучия. Древнейшая раса.'
+      },
+      geomanty: {
+        rune: 'Земля', cls: 'rune-earth',
+        name: 'Геоманты',
+        meta: 'Родина: Аурелия, Гепар',
+        desc: 'Родились из слезы Ноасиса. Повелевают камнем и почвой. Мирные созидатели, беспощадны к оскверняющим землю.'
+      },
+      ksenofagi: {
+        rune: 'Пожиратель', cls: 'rune-death',
+        name: 'Ксенофаги',
+        meta: 'Родина: Гастрон',
+        desc: 'Хищники Гастрона. Пожирают руны, впитывая силу. Бесформенные тела с пастями и щупальцами. Опасны как стихия.'
+      },
+      sarkofagi: {
+        rune: 'Смерть', cls: 'rune-death',
+        name: 'Саркофаги',
+        meta: 'Родина: Некрополис, Гастрон',
+        desc: 'Грибницы в мёртвых телах. Древние знания через воспоминания мёртвых. Выглядят как мумии в грибнице.'
+      },
+      umbraly: {
+        rune: 'Тьма / Тень / Забвение / Смерть', cls: 'rune-darkness',
+        name: 'Умбралы',
+        meta: 'Родина: Трещины Полотна',
+        desc: 'Пятна незаполненного пространства на Полотне. Сама являются руной. Редки, могущественны, непостижимы.'
+      },
+      gremliny: {
+        rune: 'Хаос', cls: 'rune-unique',
+        name: 'Гремлины',
+        meta: 'Родина: Разломы реальности',
+        desc: 'Существа чистого хаоса. Ломают механизмы, искажают руны, сеют неразбериху. Появляются там, где реальность истончается.'
+      }
+    };
+
+    function selectRace(el) {
+      const key = el.dataset.race;
+      const data = RACE_DATA[key];
+      if (!data) return;
+
+      document.querySelectorAll('.race-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+
+      const panel = document.getElementById('sel-panel');
+      document.getElementById('sel-rune-badge').textContent = data.rune;
+      document.getElementById('sel-rune-badge').className = 'sel-rune ' + data.cls;
+      document.getElementById('sel-race-name').textContent = data.name;
+      document.getElementById('sel-race-meta').textContent = data.meta;
+      document.getElementById('sel-race-desc').textContent = data.desc;
+      panel.classList.add('visible');
+
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  </script>
+</body>
+</html>
