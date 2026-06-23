@@ -4,6 +4,8 @@
 const STAR_COLORS = [
   'rgba(255,255,255,', 'rgba(200,220,255,', 'rgba(255,240,200,',
   'rgba(200,200,255,', 'rgba(255,200,150,', 'rgba(180,200,255,',
+  'rgba(200,180,255,', 'rgba(180,220,180,', 'rgba(255,180,180,',
+  'rgba(200,230,255,', 'rgba(255,210,180,', 'rgba(220,200,255,',
 ];
 
 function makeStars(count, maxOpacity) {
@@ -37,9 +39,9 @@ function buildStarLayer(className, z, twinkleDur, count, opacity, parallaxFactor
 }
 
 function initStarfield() {
-  buildStarLayer('star-layer-1', -3, 4, 300, 0.6);
-  buildStarLayer('star-layer-2', -2, 6, 120, 0.9);
-  buildStarLayer('star-layer-3', -1, 3, 60, 0.5, 0.3);
+  buildStarLayer('star-layer-1', -3, 4, 500, 0.5);
+  buildStarLayer('star-layer-2', -2, 6, 200, 0.8);
+  buildStarLayer('star-layer-3', -1, 3, 100, 0.4, 0.3);
 }
 
 // Parallax
@@ -53,9 +55,10 @@ function onScrollParallax() {
 }
 
 // ============================================================
-// 2. FLOATING RUNE DECORATIONS — 45 runes across viewport
+// 2. FLOATING RUNE DECORATIONS — 60 runes across viewport
 // ============================================================
 const RUNE_CHARS = ['ᚠ','ᚢ','ᚦ','ᚨ','ᚱ','ᚲ','ᚷ','ᚹ','ᚺ','ᚾ','ᛁ','ᛃ','ᛇ','ᛈ','ᛉ','ᛊ','ᛏ','ᛒ','ᛖ','ᛗ','ᛚ','ᛝ','ᛟ','ᛞ'];
+const RUNE_FLOAT_COLORS = ['#cc3300','#3399cc','#4488dd','#8b6914','#8899bb','#990000','#7b2d8e','#ccaa33','#330033','#228b22','#555555','#999988','#cc5500','#778899','#228888','#b8960f','#664488','#228855','#7777aa','#cc5577','#666677','#cc6666'];
 
 function initRuneDecorations() {
   const style = document.createElement('style');
@@ -70,14 +73,15 @@ function initRuneDecorations() {
       0%,100%{opacity:var(--rune-op,0.04)}
       50%{opacity:calc(var(--rune-op,0.04)+0.03)}
     }
-    .rune-float{position:fixed;pointer-events:none;user-select:none;z-index:-1;color:#e8c547;font-family:serif;animation:float-rune var(--dur,8s) ease-in-out infinite,pulse-rune var(--pulse,5s) ease-in-out infinite;animation-delay:var(--del,0s)}
+    .rune-float{position:fixed;pointer-events:none;user-select:none;z-index:-1;font-family:serif;animation:float-rune var(--dur,8s) ease-in-out infinite,pulse-rune var(--pulse,5s) ease-in-out infinite;animation-delay:var(--del,0s)}
   `;
   document.head.appendChild(style);
 
-  for (let i = 0; i < 45; i++) {
+  for (let i = 0; i < 60; i++) {
     const el = document.createElement('div');
     el.className = 'rune-float';
     el.textContent = RUNE_CHARS[i % RUNE_CHARS.length];
+    const color = RUNE_FLOAT_COLORS[Math.floor(Math.random() * RUNE_FLOAT_COLORS.length)];
     const isLeft = Math.random() > 0.5;
     el.style.cssText = `
       ${isLeft ? 'left' : 'right'}:${2 + Math.random() * (isLeft ? 20 : 68)}%;
@@ -88,7 +92,9 @@ function initRuneDecorations() {
       --del:${Math.random() * 12}s;
       --pulse:${4 + Math.random() * 6}s;
       transform:rotate(${Math.random() * 360}deg);
-      opacity:${0.02 + Math.random() * 0.05};
+      opacity:${0.03 + Math.random() * 0.06};
+      color:${color};
+      text-shadow:0 0 12px ${color}55;
     `;
     document.body.appendChild(el);
   }
@@ -168,11 +174,12 @@ function initCosmicDust() {
       const p = document.createElement('div');
       p.className = 'dust-particle';
       const size = 1.5 + Math.random() * 3;
+      const dustColor = RUNE_FLOAT_COLORS[Math.floor(Math.random() * RUNE_FLOAT_COLORS.length)];
       p.style.cssText = `
         left:${e.clientX + (Math.random() - 0.5) * 40}px;
         top:${e.clientY + (Math.random() - 0.5) * 40}px;
         width:${size}px;height:${size}px;
-        background:${Math.random() > 0.5 ? 'rgba(232,197,71,0.6)' : 'rgba(200,220,255,0.4)'};
+        background:${dustColor}88;
       `;
       document.body.appendChild(p);
       setTimeout(() => p.remove(), 1500);
