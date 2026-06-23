@@ -332,6 +332,7 @@
     </div>
   </footer>
   <script src="../scripts/wiki-data.js"></script>
+  <script src="../data/titles.js"></script>
   <script src="../scripts/main.js"></script>
   <script>
     const STEP_LABELS = ['Раса','Руна','Вторая руна','Личность','Родина','Предыстория','Готово'];
@@ -375,7 +376,8 @@
     let state = {
       step: 1, race: null, secondRune: null,
       name: '', gender: 'male', age: 20,
-      birthplace: '', description: '', backstory: ''
+      birthplace: '', description: '', backstory: '',
+      title: null, titleVariants: []
     };
 
     function init() {
@@ -427,7 +429,7 @@
       if (n === 4) { updateRuneGrid(); checkName(); }
       if (n === 5) { autoFillBirthplace(); checkName(); }
       if (n === 6) { if (!state.backstory) generateBackstory(); }
-      if (n === 7) renderFinalCard();
+      if (n === 7) { generateTitles(); renderFinalCard(); }
       showStep(n);
     }
 
@@ -564,6 +566,46 @@
       document.getElementById('backstory-input').value = state.backstory;
     }
 
+    // Маппинг расовых рун → семейства рун
+    var RUNE_TO_FAMILY = {
+      '—': 'Эссенция', 'Камень': 'Земля', 'Природа': 'Жизнь', 'Псионика': 'Память',
+      'Гигантизм': 'Ярость', 'Амбиция': 'Тьма', 'Стекло': 'Геометрия', 'Споры': 'Смерть',
+      'Дикость': 'Ярость', 'Минерал': 'Земля', 'Механика': 'Металл', 'Марионетка': 'Тьма',
+      'Демон': 'Тьма', 'Порядок': 'Свет', 'Знание': 'Память', 'Подражание': 'Тень',
+      'Гармония': 'Геометрия', 'Мистификация': 'Сон', 'Иллюзия': 'Тень', 'Отражение': 'Звук',
+      'Адаптация': 'Эссенция', 'Хмель': 'Звук', 'Резонанс': 'Эссенция', 'Пожиратель': 'Смерть',
+      'Хаос': 'Ярость'
+    };
+
+    function getTitleFamily(runeName) {
+      if (!runeName) return 'Эссенция';
+      // Handle multi-rune like "Тьма/Тень/Смерть" — take first
+      var parts = runeName.split('/');
+      var first = parts[0].trim();
+      return RUNE_TO_FAMILY[first] || first;
+    }
+
+    function generateTitles() {
+      const r = RACE_DATA.find(x => x.key === state.race);
+      if (!r) return;
+      var runes = [getTitleFamily(r.rune)];
+      var levels = [10];
+      if (state.secondRune) {
+        runes.push(getTitleFamily(state.secondRune));
+        levels.push(8);
+      }
+      state.titleVariants = generateTitleVariants(runes, levels);
+      if (!state.title) {
+        state.title = state.titleVariants.length > 0 ? state.titleVariants[0] : { full: 'Безымянный', base: 'Безымянный', prefix: '', suffix: '' };
+      }
+    }
+
+    function pickTitle(idx) {
+      if (!state.titleVariants[idx]) return;
+      state.title = state.titleVariants[idx];
+      renderFinalCard();
+    }
+
     function renderFinalCard() {
       const r = RACE_DATA.find(x => x.key === state.race);
       if (!r) return;
@@ -587,6 +629,20 @@
       html += `<div class="fc-race">${r.name}</div>`;
       html += `<div class="fc-details">${genderLabel}, ${state.age} лет · ${r.homeland} · ${path}</div>`;
       html += `<div class="fc-runes">${runesHtml}</div>`;
+
+      // Живое имя — секция выбора титула
+      html += `<div class="fc-section"><h4>✦ Живое Имя</h4>`;
+      html += `<div class="title-options">`;
+      if (state.titleVariants && state.titleVariants.length > 0) {
+        state.titleVariants.forEach(function(t, i) {
+          var selected = state.title && state.title.full === t.full ? ' selected' : '';
+          html += `<div class="title-opt${selected}" onclick="pickTitle(${i})">${t.full}</div>`;
+        });
+      }
+      html += `</div>`;
+      var selectedTitle = state.title ? state.title.full : '—';
+      html += `<div class="title-chosen">Избранный титул: <strong>${selectedTitle}</strong></div>`;
+      html += `</div>`;
       if (state.birthplace && state.birthplace !== r.homeland) {
         html += `<div class="fc-section"><h4>✦ Место рождения</h4><p>${state.birthplace}</p></div>`;
       }
@@ -620,6 +676,7 @@
         birthplace: state.birthplace || r.homeland,
         description: state.description,
         backstory: state.backstory,
+        title: state.title ? state.title.full : '',
         created: new Date().toISOString()
       };
 
@@ -653,10 +710,12 @@
           ? `${runeBadge} <span style="font-size:0.75rem;color:#666">+</span> <span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.75rem;background:${getRuneColor(getRuneClass(h.secondRune))}">${h.secondRune}</span>`
           : runeBadge;
         const ageGender = (h.gender === 'male' ? 'Муж.' : 'Жен.') + ', ' + (h.age || '?') + ' лет';
+        var titleDisplay = h.title ? '<div class="hc-title">' + h.title + '</div>' : '';
         return `<div class="hall-card hc-${idx}" onclick="loadHero(${idx})">
           ${style}
           <button class="hc-del" onclick="event.stopPropagation();deleteHero(${idx})" title="Удалить">✕</button>
           <div class="hc-name">${h.name}</div>
+          ${titleDisplay}
           <div class="hc-meta">${h.race} · ${ageGender}</div>
           <div class="hc-runes">${runes}</div>
         </div>`;
@@ -676,6 +735,7 @@
       state.birthplace = h.birthplace || '';
       state.description = h.description || '';
       state.backstory = h.backstory || '';
+      state.title = h.title ? { full: h.title } : null;
 
       document.getElementById('name-input').value = h.name;
       document.getElementById('gender-input').value = state.gender;
@@ -691,6 +751,7 @@
       document.getElementById('save-btn').textContent = '✧ Сохранить в Зал Собирателей';
       document.getElementById('save-btn').disabled = false;
 
+      generateTitles();
       goStep(7);
       renderFinalCard();
     }
@@ -720,7 +781,7 @@
     }
 
     function resetAll() {
-      state = { step:1, race:null, secondRune:null, name:'', gender:'male', age:20, birthplace:'', description:'', backstory:'' };
+      state = { step:1, race:null, secondRune:null, name:'', gender:'male', age:20, birthplace:'', description:'', backstory:'', title:null, titleVariants:[] };
       document.querySelectorAll('.race-opt').forEach(el => el.classList.remove('chosen'));
       document.querySelectorAll('.rune-opt').forEach(el => el.classList.remove('chosen'));
       document.getElementById('race-search').value = '';
@@ -773,6 +834,7 @@
       document.getElementById('to-step-5').disabled = false;
 
       generateBackstory();
+      generateTitles();
       goStep(7);
     }
 
