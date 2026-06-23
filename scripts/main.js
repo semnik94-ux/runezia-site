@@ -122,43 +122,22 @@ function initScrollReveal() {
 }
 
 // ============================================================
-// 4. CUSTOM CURSOR — rune ᛟ + star trail
+// 4. STAR TRAIL
 // ============================================================
-let cursorEl = null;
-let mouseX = -100, mouseY = -100;
 let trailTimer = 0;
 
-function initCustomCursor() {
-  cursorEl = document.createElement('div');
-  cursorEl.className = 'custom-cursor';
-  cursorEl.textContent = 'ᛟ';
-  document.body.appendChild(cursorEl);
-  document.body.classList.add('custom-cursor-active');
-
+function initStarTrail() {
   document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    cursorEl.style.left = mouseX + 'px';
-    cursorEl.style.top = mouseY + 'px';
-
-    // star trail
     const now = Date.now();
     if (now - trailTimer > 40) {
       trailTimer = now;
       const trail = document.createElement('div');
       trail.className = 'star-trail';
-      trail.style.left = (mouseX + (Math.random() - 0.5) * 8) + 'px';
-      trail.style.top = (mouseY + (Math.random() - 0.5) * 8) + 'px';
+      trail.style.left = (e.clientX + (Math.random() - 0.5) * 8) + 'px';
+      trail.style.top = (e.clientY + (Math.random() - 0.5) * 8) + 'px';
       document.body.appendChild(trail);
       setTimeout(() => trail.remove(), 600);
     }
-  });
-
-  document.addEventListener('mouseleave', () => {
-    cursorEl.style.opacity = '0';
-  });
-  document.addEventListener('mouseenter', () => {
-    cursorEl.style.opacity = '1';
   });
 }
 
@@ -723,7 +702,7 @@ function initSkeleton() {
 document.addEventListener('DOMContentLoaded', () => {
   initStarfield();
   initRuneDecorations();
-  initCustomCursor();
+  initStarTrail();
   initCosmicDust();
   initRuneOfTheDay();
   initLoreTooltips();

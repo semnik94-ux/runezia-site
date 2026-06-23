@@ -16,17 +16,7 @@ body {
   flex-direction: column;
   position: relative;
   overflow-x: hidden;
-}
-
-body.custom-cursor-active {
-  cursor: none;
-}
-body.custom-cursor-active a,
-body.custom-cursor-active button,
-body.custom-cursor-active input,
-body.custom-cursor-active select,
-body.custom-cursor-active textarea {
-  cursor: none;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='24' viewBox='0 0 20 24'%3E%3Cdefs%3E%3Cfilter id='s' x='-50%25' y='-50%25' width='200%25' height='200%25'%3E%3CfeDropShadow dx='1' dy='1' stdDeviation='1' flood-color='%23000' flood-opacity='0.6'/%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M2,2 L2,22 L7,17 L12,22 L14,20 L9,15 L18,15 L18,13 Z' fill='%23e8c547' stroke='%23a08020' stroke-width='0.6' stroke-linejoin='round' filter='url(%23s)'/%3E%3C/svg%3E") 2 2, auto;
 }
 
 h1, h2, h3, h4, .logo {
@@ -613,20 +603,6 @@ footer {
   background: rgba(26, 26, 58, 0.5);
 }
 
-/* ===== CUSTOM CURSOR ===== */
-.custom-cursor {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  font-size: 1.4rem;
-  color: #e8c547;
-  text-shadow: 0 0 15px rgba(232,197,71,0.4);
-  transform: translate(-50%, -50%);
-  transition: opacity 0.2s;
-  line-height: 1;
-  font-family: serif;
-  mix-blend-mode: difference;
-}
 .star-trail {
   position: fixed;
   pointer-events: none;
@@ -1432,7 +1408,6 @@ html { scroll-behavior: smooth; }
   .nav-links a { font-size: 0.8rem; }
   .hero::before { font-size: 1.2rem; letter-spacing: 4px; }
   .hero { padding: 60px 0 40px; }
-  .custom-cursor { display: none !important; }
   .star-trail { display: none !important; }
   .dust-particle { display: none !important; }
   .error-404 h1 { font-size: 1.5rem; }
