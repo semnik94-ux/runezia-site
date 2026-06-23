@@ -17,7 +17,8 @@
       <a href="index.html" class="logo">✦ Рунезия</a>
       <ul class="nav-links">
         <li><a href="index.html">Главная</a></li>
-        <li><a href="wiki/index.html">Вики</a></li>
+        <li><a href="wiki/index.html">Хроники</a></li>
+        <li><a href="devlog.html">Дневники</a></li>
         <li><a href="gallery.html">Галерея</a></li>
         <li><a href="ideas.html">Идеи</a></li>
       </ul>
@@ -36,11 +37,17 @@
   </header>
 
   <main class="container">
+
+    <div class="aphorism">
+      <div class="aphorism-text">«Каждый есть узор на Великом Полотне.&nbsp;Измени свой узор — изменишь мир. Но помни — за каждое изменение придётся заплатить.»</div>
+      <div class="aphorism-attribution">— Шепот Полотна</div>
+    </div>
+
     <section class="cards">
       <div class="card">
-        <h2>📖 Википедия</h2>
+        <h2>📜 Хроники Узора</h2>
         <p>Руны, расы, бестиарий, история и география мира Рунезии.</p>
-        <a href="wiki/index.html" class="btn-small">Перейти</a>
+        <a href="wiki/index.html" class="btn-small">Изучить тайны</a>
       </div>
       <div class="card">
         <h2>⚔️ Создание персонажа</h2>
@@ -52,19 +59,40 @@
         <p>Скриншоты, арты и концепты из мира Рунезии.</p>
         <a href="gallery.html" class="btn-small">Смотреть</a>
       </div>
+      <div class="card">
+        <h2>🤝 Сообщество</h2>
+        <p>Discord, идеи, совместное развитие лора и механик проекта.</p>
+        <a href="ideas.html" class="btn-small">Присоединиться</a>
+      </div>
     </section>
 
     <div class="rune-divider">✦ ✦ ✦</div>
+
+    <div class="curse-bar-wrap">
+      <div class="curse-bar-header">
+        <span class="curse-bar-label">☠ Проклятие мира</span>
+        <span class="curse-bar-pct">43%</span>
+      </div>
+      <div class="curse-bar-track">
+        <div class="curse-bar-fill" id="curse-fill"></div>
+        <div class="curse-bar-runes">ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ ᚷ ᚹ ᚺ ᚾ ᛁ ᛃ ᛇ ᛈ ᛉ ᛊ ᛏ ᛒ ᛖ ᛗ ᛚ ᛝ ᛟ ᛞ</div>
+      </div>
+    </div>
 
     <section class="about">
       <h2>О мире</h2>
       <p>Рунезия — гигантский божественный организм, нарисованный богом-художником Рунном на полотне космоса. Пять континентов-органов — Сердце, Мозг, Печень, Желудок и Сон — пульсируют в едином ритме. Древние руны пронизывают реальность, даруя силу тем, кто осмелится их познать. Но за каждую руну приходится платить — проклятие растёт, границы между жизнью и смертью стираются, а в Зазеркалье и Демиургионе пробуждаются тёмные силы.</p>
     </section>
+
+    <div class="rune-divider">✦ ✦ ✦</div>
+
+    <section class="devlog-grid" id="devlog-teaser"></section>
   </main>
 
   <footer>
     <div class="container footer-inner">
       <p>&copy; 2026 Рунезия. Сайт создан фанатами для фанатов.</p>
+      <div class="footer-whisper" id="footer-whisper"></div>
     </div>
   </footer>
 

@@ -724,6 +724,166 @@ function initSkeleton() {
 }
 
 // ============================================================
+// 15. INTERACTIVE RUNES — hover tooltip + click modal
+// ============================================================
+const RUNE_MODAL_DATA = {
+  'Огонь':     { aura:'Красный', examples:'Огненный шар, Огненный удар, Огненная броня, Огненная стена, Огненная стрела, Вспышка', lore:'Пламя — первый дар, что получил мир. В нём — и жизнь, и смерть.' },
+  'Вода':      { aura:'Голубой', examples:'Водяная стрела, Исцеляющий дождь, Водная маскировка, Волна, Очищение', lore:'Вода помнит всё. Каждый поток — нить судьбы.' },
+  'Лёд':       { aura:'Синий', examples:'Ледяная стрела, Ледяная стена, Заморозка', lore:'Лёд — это память мира. То, что застыло, нельзя изменить.' },
+  'Земля':     { aura:'Коричневый', examples:'Каменная кожа, Землетрясение, Каменный кулак', lore:'Земля не предаёт. Она ждёт.' },
+  'Воздух':    { aura:'Белый', examples:'Ускорение, Разряд, Смерч', lore:'Ветер не имеет формы, но меняет всё.' },
+  'Кровь':     { aura:'Тёмно-красный', examples:'Кровавый укус, Кровавая жертва, Кровавая связь, Геморрагия', lore:'Кровь — это сила. За неё платят.' },
+  'Тень':      { aura:'Фиолетовый', examples:'Теневой удар, Маскировка, Теневые клинки', lore:'Тень не врёт. Тень — это то, чего нет.' },
+  'Свет':      { aura:'Жёлтый', examples:'Луч света, Благословение, Святая броня', lore:'Свет — первое оружие против тьмы. Но свет может ослепить.' },
+  'Тьма':      { aura:'Тёмно-фиолетовый', examples:'Страх, Проклятие, Облако тьмы', lore:'Тьма — не зло. Тьма — это выбор.' },
+  'Жизнь':     { aura:'Зелёный', examples:'Регенерация, Жизненный импульс, Воскрешение', lore:'Жизнь — это пламя, что горит вопреки всему.' },
+  'Смерть':    { aura:'Серый', examples:'Касание смерти, Распад', lore:'Смерть — не конец. Смерть — это начало.' },
+  'Кость':     { aura:'Костяной', examples:'Создание нежити, Костяной щит, Призыв скелетов-лучников', lore:'Кости — это каркас реальности. Сломай его — и мир рухнет.' },
+  'Ярость':    { aura:'Оранжевый', examples:'Берсерк, критические удары', lore:'Ярость — это топливо. Без неё нет победы.' },
+  'Защита':    { aura:'Серебряный', examples:'Броня, блоки, барьеры', lore:'Настоящая сила — в умении защищать.' },
+  'Эссенция':  { aura:'Бирюзовый', examples:'Восстановление ресурсов, подпитка', lore:'Всё сущее состоит из эссенции. Руны — её язык.' },
+  'Память':    { aura:'Золотой', examples:'Архивы знаний, поиск истины', lore:'Память — это библиотека душ. Мы — лишь её страницы.' },
+  'Сон':       { aura:'Лавандовый', examples:'Усыпление, контроль разума', lore:'Сон — это дверь в другие миры. Но не все возвращаются.' },
+  'Геометрия': { aura:'Изумрудный', examples:'Телепортация, пространственные искажения', lore:'Реальность — это чертёж. Геометрия — его основа.' },
+  'Звук':      { aura:'Прозрачный', examples:'Ауры, дебаффы, резонанс', lore:'Звук — это вибрация души. Тишина — её отсутствие.' },
+  'Плоть':     { aura:'Розовый', examples:'Биомантия, мутации, трансформация', lore:'Плоть — это холст. Руны — кисть.' },
+  'Металл':    { aura:'Металлик', examples:'Ковка, магнитные поля, сплавы', lore:'Металл — это воля, застывшая в форме.' },
+  'Душа':      { aura:'Розовый', examples:'Связывание душ, обмен, жертвенные ритуалы', lore:'Душа — единственное, что по-настоящему принадлежит тебе.' },
+};
+
+function initInteractiveRunes() {
+  var tooltip = document.createElement('div');
+  tooltip.className = 'rune-tooltip';
+  document.body.appendChild(tooltip);
+
+  var modalOverlay = document.createElement('div');
+  modalOverlay.className = 'rune-modal-overlay';
+  modalOverlay.innerHTML = '<div class="rune-modal"><button class="rune-modal-close">✕</button><span class="rune-modal-char"></span><span class="rune-modal-family"></span><span class="rune-modal-family-sub"></span><div class="rune-modal-section"><h4>✦ Аура</h4><p class="rune-modal-aura"></p></div><div class="rune-modal-section"><h4>✦ Примеры рун</h4><p class="rune-modal-examples"></p></div><div class="rune-modal-section"><h4>✦ Лор</h4><p class="rune-modal-lore"></p></div></div>';
+  document.body.appendChild(modalOverlay);
+  var modalClose = modalOverlay.querySelector('.rune-modal-close');
+  modalClose.addEventListener('click', function() { modalOverlay.classList.remove('active'); });
+  modalOverlay.addEventListener('click', function(e) { if (e.target === modalOverlay) modalOverlay.classList.remove('active'); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') modalOverlay.classList.remove('active'); });
+
+  var runeEls = document.querySelectorAll('.rune-float');
+  if (!runeEls.length) return;
+
+  runeEls.forEach(function(el) {
+    el.style.pointerEvents = 'auto';
+    el.style.cursor = 'pointer';
+  });
+
+  document.addEventListener('mouseover', function(e) {
+    var el = e.target.closest('.rune-float');
+    if (!el) { tooltip.classList.remove('show'); return; }
+    var family = el.dataset.family;
+    var entry = RUNE_FAMILY_MAP.find(function(f) { return f.family === family; });
+    var data = RUNE_MODAL_DATA[family];
+    if (!entry || !data) { tooltip.classList.remove('show'); return; }
+    tooltip.innerHTML = '<span class="rt-char" style="color:' + entry.color + '">' + entry.rune + '</span><span class="rt-family">' + family + '</span><span class="rt-desc">' + data.aura + '. ' + data.examples.substring(0, 60) + '…</span>';
+    tooltip.classList.add('show');
+    var pad = 14;
+    var tx = e.clientX + pad;
+    var ty = e.clientY + pad;
+    var trect = tooltip.getBoundingClientRect();
+    if (tx + trect.width > window.innerWidth - 10) tx = e.clientX - trect.width - pad;
+    if (ty + trect.height > window.innerHeight - 10) ty = e.clientY - trect.height - pad;
+    tooltip.style.left = tx + 'px';
+    tooltip.style.top = ty + 'px';
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    var el = e.target.closest('.rune-float');
+    if (!el) return;
+    if (!tooltip.classList.contains('show')) return;
+    var pad = 14;
+    var tx = e.clientX + pad;
+    var ty = e.clientY + pad;
+    var trect = tooltip.getBoundingClientRect();
+    if (tx + trect.width > window.innerWidth - 10) tx = e.clientX - trect.width - pad;
+    if (ty + trect.height > window.innerHeight - 10) ty = e.clientY - trect.height - pad;
+    tooltip.style.left = tx + 'px';
+    tooltip.style.top = ty + 'px';
+  });
+
+  document.addEventListener('click', function(e) {
+    var el = e.target.closest('.rune-float');
+    if (!el) return;
+    var family = el.dataset.family;
+    var entry = RUNE_FAMILY_MAP.find(function(f) { return f.family === family; });
+    var data = RUNE_MODAL_DATA[family];
+    if (!entry || !data) return;
+    tooltip.classList.remove('show');
+    modalOverlay.querySelector('.rune-modal-char').textContent = entry.rune;
+    modalOverlay.querySelector('.rune-modal-char').style.color = entry.color;
+    modalOverlay.querySelector('.rune-modal-family').textContent = family;
+    modalOverlay.querySelector('.rune-modal-family-sub').textContent = 'Семейство рун';
+    modalOverlay.querySelector('.rune-modal-aura').textContent = data.aura;
+    modalOverlay.querySelector('.rune-modal-examples').textContent = data.examples;
+    modalOverlay.querySelector('.rune-modal-lore').textContent = data.lore;
+    modalOverlay.classList.add('active');
+  });
+}
+
+// ============================================================
+// 16. WHISPER OF THE GODS — random quote on load
+// ============================================================
+var WHISPERS = [
+  'Рунн провёл первую линию — так родилось пространство.',
+  'Каждый Сброс — это смерть и возрождение.',
+  'Суд Искажённого Лика не спит. Он видит каждый узор.',
+  'Пять континентов — пять органов единого божественного тела.',
+  'Руна — это не ключ к знаниям. Руна — это само знание.',
+  'В Зазеркалье время течёт вспять. Но никто не возвращается прежним.',
+  'Великое Полотно дышит. Слышишь? Это пульс мира.',
+  'Демиургион — тюрьма, ставшая домом. Или наоборот.',
+  'Не каждая тень — враг. Но каждая тьма — выбор.',
+  'Патологии — это божественные слёзы. Они заразны.',
+];
+
+function initWhisper() {
+  var containers = document.querySelectorAll('.footer-whisper');
+  if (!containers.length) {
+    // auto-inject into footers
+    document.querySelectorAll('.footer-inner').forEach(function(f) {
+      if (!f.querySelector('.footer-whisper')) {
+        var div = document.createElement('div');
+        div.className = 'footer-whisper';
+        f.appendChild(div);
+        containers = document.querySelectorAll('.footer-whisper');
+      }
+    });
+  }
+  var whisper = WHISPERS[Math.floor(Math.random() * WHISPERS.length)];
+  containers.forEach(function(el) { el.textContent = '✧ ' + whisper; });
+}
+
+// ============================================================
+// 17. CURSE BAR — animate fill on load
+// ============================================================
+function initCurseBar() {
+  var fill = document.getElementById('curse-fill');
+  if (!fill) return;
+  setTimeout(function() { fill.classList.add('animated'); }, 300);
+}
+
+// ============================================================
+// 18. DEVLOG TEASER — load latest posts
+// ============================================================
+function initDevlogTeaser() {
+  var container = document.getElementById('devlog-teaser');
+  if (!container) return;
+  fetch('data/devlog.json').then(function(r) { return r.json(); }).then(function(posts) {
+    var teasers = posts.slice(0, 2);
+    container.innerHTML = '<h2 style="color:#e8c547;font-family:Cinzel,serif;font-size:1.3rem;margin-bottom:8px">🗞️ Последний шепот</h2><p style="color:#6a6a8a;margin-bottom:16px;font-size:0.85rem">Дневники разработки мира</p>' + teasers.map(function(p) {
+      return '<div class="devlog-card"><span class="dl-date">' + p.date + '</span><div class="dl-title">' + p.title + '</div><div class="dl-desc">' + p.desc + '</div><div class="dl-tags">' + (p.tags || []).map(function(t) { return '<span class="dl-tag">' + t + '</span>'; }).join('') + '</div><a href="devlog.html" class="dl-readmore">Читать далее →</a></div>';
+    }).join('');
+  }).catch(function() {
+    container.innerHTML = '<h2 style="color:#e8c547;font-family:Cinzel,serif;font-size:1.3rem">🗞️ Последний шепот</h2><p style="color:#6a6a8a">Дневники пока пусты. Скоро здесь появятся записи.</p>';
+  });
+}
+
+// ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -734,10 +894,14 @@ document.addEventListener('DOMContentLoaded', () => {
   initRuneOfTheDay();
   initLoreTooltips();
   initScrollReveal();
+  initInteractiveRunes();
+  initWhisper();
+  initCurseBar();
 
   if (document.querySelector('.wiki-grid')) initConstellation();
   if (document.querySelector('.rune-search-wrap')) initRuneSearch();
   if (document.getElementById('pantheon-chart')) initPantheonChart();
+  if (document.getElementById('devlog-teaser')) initDevlogTeaser();
   initWikiSearch();
   if (document.getElementById('gallery-grid')) initGalleryLightbox();
   if (document.getElementById('ideas-container')) initIdeasDelete();

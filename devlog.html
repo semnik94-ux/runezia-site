@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Дневники разработки мира Рунезии — последние новости, изменения и планы.">
+  <meta property="og:title" content="Дневники — Рунезия">
+  <meta property="og:description" content="Разработка мира рун, геометрии и космоса.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <title>🗞️ Дневники — Рунезия</title>
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">✦ Рунезия</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="wiki/index.html">Хроники</a></li>
+        <li><a href="devlog.html">Дневники</a></li>
+        <li><a href="gallery.html">Галерея</a></li>
+        <li><a href="ideas.html">Идеи</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>🗞️ Дневники</h1>
+      <p class="ph-sub">Шёпот богов, записанный смертными</p>
+    </div>
+
+    <div class="devlog-grid" id="devlog-full"></div>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <p>&copy; 2026 Рунезия. Сайт создан фанатами для фанатов.</p>
+      <div class="footer-whisper" id="footer-whisper"></div>
+    </div>
+  </footer>
+  <script src="scripts/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var container = document.getElementById('devlog-full');
+      if (!container) return;
+      fetch('data/devlog.json').then(function(r) { return r.json(); }).then(function(posts) {
+        container.innerHTML = posts.map(function(p) {
+          return '<div class="devlog-card"><span class="dl-date">' + p.date + '</span><div class="dl-title">' + p.title + '</div><div class="dl-desc">' + p.desc + '</div><div class="dl-tags">' + (p.tags || []).map(function(t) { return '<span class="dl-tag">' + t + '</span>'; }).join('') + '</div></div>';
+        }).join('');
+      }).catch(function() {
+        container.innerHTML = '<p style="color:#6a6a8a">Дневники пока пусты.</p>';
+      });
+    });
+  </script>
+</body>
+</html>
