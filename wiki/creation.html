@@ -327,6 +327,7 @@
       <p>&copy; 2026 Рунезия. Сайт создан фанатами для фанатов.</p>
     </div>
   </footer>
+  <script src="../scripts/wiki-data.js"></script>
   <script src="../scripts/main.js"></script>
   <script>
     const STEP_LABELS = ['Раса','Руна','Вторая руна','Личность','Родина','Предыстория','Готово'];
@@ -365,31 +366,6 @@
       { key:'sarkofagi', name:'Саркофаги', rune:'Смерть', rclass:'rune-death', aclass:'aura-death', homeland:'Некрополис, Гастрон', desc:'Грибницы в мёртвых телах. Знания мёртвых.' },
       { key:'umbraly', name:'Умбралы', rune:'Тьма/Тень/Смерть', rclass:'rune-darkness', aclass:'aura-darkness', homeland:'Трещины Полотна', desc:'Пятна незаполненного пространства.' },
       { key:'gremliny', name:'Гремлины', rune:'Хаос', rclass:'rune-unique', aclass:'aura-unique', homeland:'Разломы реальности', desc:'Существа хаоса. Ломают механизмы.' }
-    ];
-
-    const RUNE_FAMILIES = [
-      { name:'Огонь', desc:'Урон, поджог, разрушение', cls:'rune-fire', aclass:'aura-fire', color:'#cc3300' },
-      { name:'Вода', desc:'Исцеление, контроль', cls:'rune-water', aclass:'aura-water', color:'#3399cc' },
-      { name:'Лёд', desc:'Замедление, заморозка', cls:'rune-ice', aclass:'aura-ice', color:'#4488dd' },
-      { name:'Земля', desc:'Защита, тяжёлый урон', cls:'rune-earth', aclass:'aura-earth', color:'#8b6914' },
-      { name:'Воздух', desc:'Скорость, молнии', cls:'rune-air', aclass:'aura-air', color:'#8899bb' },
-      { name:'Кровь', desc:'Вампиризм, жертва', cls:'rune-blood', aclass:'aura-blood', color:'#990000' },
-      { name:'Тень', desc:'Скрытность, иллюзии', cls:'rune-shadow', aclass:'aura-shadow', color:'#7b2d8e' },
-      { name:'Свет', desc:'Исцеление, истина', cls:'rune-light', aclass:'aura-light', color:'#ccaa33' },
-      { name:'Тьма', desc:'Страх, проклятия', cls:'rune-darkness', aclass:'aura-darkness', color:'#330033' },
-      { name:'Жизнь', desc:'Регенерация, рост', cls:'rune-life', aclass:'aura-life', color:'#228b22' },
-      { name:'Смерть', desc:'Некроурон, увядание', cls:'rune-death', aclass:'aura-death', color:'#555555' },
-      { name:'Кость', desc:'Некромантия, броня', cls:'rune-bone', aclass:'aura-bone', color:'#999988' },
-      { name:'Ярость', desc:'Берсерк, криты', cls:'rune-rage', aclass:'aura-rage', color:'#cc5500' },
-      { name:'Защита', desc:'Броня, блоки', cls:'rune-protection', aclass:'aura-protection', color:'#778899' },
-      { name:'Эссенция', desc:'Ресурсы, восстановление', cls:'rune-essence', aclass:'aura-essence', color:'#228888' },
-      { name:'Память', desc:'Знания, архивы', cls:'rune-memory', aclass:'aura-memory', color:'#b8960f' },
-      { name:'Сон', desc:'Контроль, усыпление', cls:'rune-dream', aclass:'aura-dream', color:'#664488' },
-      { name:'Геометрия', desc:'Пространство, телепортация', cls:'rune-geometry', aclass:'aura-geometry', color:'#228855' },
-      { name:'Звук', desc:'Ауры, дебаффы', cls:'rune-sound', aclass:'aura-sound', color:'#7777aa' },
-      { name:'Плоть', desc:'Биомантия, мутации', cls:'rune-flesh', aclass:'aura-flesh', color:'#cc5577' },
-      { name:'Металл', desc:'Ковка, магнитные поля', cls:'rune-metal', aclass:'aura-metal', color:'#666677' },
-      { name:'Душа', desc:'Связывание душ, обмен, жертва', cls:'rune-soul', aclass:'aura-soul', color:'#cc6666' }
     ];
 
     let state = {
@@ -734,20 +710,9 @@
     }
 
     function getRuneColor(cls) {
-      const map = {
-        'rune-fire':'#cc3300','rune-water':'#3399cc','rune-ice':'#4488dd','rune-earth':'#8b6914',
-        'rune-air':'#8899bb','rune-blood':'#990000','rune-shadow':'#7b2d8e','rune-light':'#ccaa33',
-        'rune-darkness':'#330033','rune-life':'#228b22','rune-death':'#555555','rune-bone':'#999988',
-        'rune-rage':'#cc5500','rune-protection':'#778899','rune-essence':'#228888','rune-memory':'#b8960f',
-        'rune-dream':'#664488','rune-geometry':'#228855','rune-sound':'#7777aa','rune-flesh':'#cc5577',
-        'rune-metal':'#666677','rune-soul':'#cc6666'
-      };
-      return map[cls] || '#555566';
-    }
-
-    function getRuneClass(name) {
-      const f = RUNE_FAMILIES.find(x => x.name === name);
-      return f ? f.cls : 'rune-unique';
+      const m = {};
+      RUNE_FAMILIES.forEach(f => { m[f.cls] = f.color; });
+      return m[cls] || '#555566';
     }
 
     function resetAll() {

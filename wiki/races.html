@@ -77,16 +77,8 @@
       <p>&copy; 2026 Рунезия. Сайт создан фанатами для фанатов.</p>
     </div>
   </footer>
+  <script src="../scripts/wiki-data.js"></script>
   <script>
-    const RUNE_COLORS = {
-      'Огонь':'#cc3300', 'Вода':'#3399cc', 'Лёд':'#4488dd', 'Земля':'#8b6914',
-      'Воздух':'#8899bb', 'Кровь':'#990000', 'Тень':'#7b2d8e', 'Свет':'#ccaa33',
-      'Тьма':'#330033', 'Жизнь':'#228b22', 'Смерть':'#555555', 'Кость':'#999988',
-      'Ярость':'#cc5500', 'Защита':'#778899', 'Эссенция':'#228888', 'Память':'#b8960f',
-      'Сон':'#664488', 'Геометрия':'#228855', 'Звук':'#7777aa', 'Плоть':'#cc5577',
-      'Металл':'#666677', 'Душа':'#cc6666'
-    };
-
     const CREATOR_GROUPS = [
       {
         id:'artak', name:'Садовник Артак',
@@ -282,8 +274,7 @@
         html += `<p class="lore-intro">${group.intro}</p>`;
         html += `<div class="race-grid">`;
         group.races.forEach(r => {
-          const color = RUNE_COLORS[r.rune] || '#555';
-          const runeFamilyKey = r.rune;
+          const color = getRuneColor(r.rune) || '#555';
           html += `<div class="race-card">`;
           html += `<div class="rc-header"><span class="rc-name">${r.name}</span>`;
           if (r.rune !== '—') {
@@ -316,7 +307,7 @@
       html += `<p class="lore-intro">Эти существа — не цивилизации, а монстры, возникшие в результате магических катастроф и экспериментов Собирателей.</p>`;
       html += `<div class="race-grid">`;
       MONSTROUS_RACES.forEach(r => {
-        const color = RUNE_COLORS[r.rune] || '#555';
+        const color = getRuneColor(r.rune) || '#555';
         html += `<div class="race-card"><div class="rc-header"><span class="rc-name">${r.name}</span>`;
         if (r.rune !== '—') {
           html += `<span class="rune-badge" style="background:${color}22;color:${color};border:1px solid ${color}44;">${r.rune}</span>`;

@@ -451,20 +451,27 @@ const WIKI_PAGES = [
   { title: 'Создание персонажа', file: 'creation.html',    desc: 'Выбери расу — каждая несёт свою исконную руну' },
   { title: 'Мир и лор',        file: 'world.html',        desc: 'География, континенты-органы, города, история, соцструктура, экономика, некрополи' },
   { title: 'Пантеон',          file: 'pantheon.html',     desc: 'Боги, творцы, патологии, 20 перстов, церкви и культы' },
-  { title: 'Расы',             file: 'races.html',        desc: '32 расы — люди, саркофаги, каймелы, кристаллиды, умбралы и другие' },
+  { title: 'Расы',             file: 'races.html',        desc: '34 расы — люди, бардуки, каймелы, кристаллиды, умбралы и другие' },
   { title: 'Фракции',          file: 'factions.html',     desc: 'СИЛ, аристократия, гильдии, тайные общества, лорные зоны' },
   { title: 'Бестиарий',        file: 'bestiary.html',     desc: 'Патологии, нежить, демоны, големы, фауна, ночь сплетения' },
   { title: 'Семейства рун',    file: 'runes.html',        desc: '22 семейства рун — стихии, ранги, примеры способностей' },
   { title: 'Система рун',      file: 'runes_detailed.html', desc: 'Ранги, семейства, пути, сокеты, титулы, модификации' },
-  { title: 'Создание персонажа', file: 'creation.html',     desc: 'Выбери расу — каждая несёт свою исконную руну' },
   { title: 'Проклятие',        file: 'curse.html',        desc: 'Формула проклятия, эссенция, шкала проклятия, стадии' },
-  { title: 'Протезы',          file: 'prosthetics.html',  desc: 'Части тела, травмы, протезы металлические/био/некро/кристалл' },
+  { title: 'Протезы',          file: 'prosthetics.html',  desc: 'Части тела, травмы, протезы метал./био/некро/кристалл' },
   { title: 'Ремёсла',          file: 'crafts.html',       desc: 'Кузнечное дело, алхимия, биомантия, некрорунология, големомантия' },
   { title: 'Титулы и аватары', file: 'titles.html',       desc: 'Живое имя, профруны, 20 аватаров, неизменяемость рун' },
 ];
 
 function initWikiSearch() {
-  const wrap = document.querySelector('.wiki-search-wrap');
+  // Auto-inject search into .page-header on all wiki pages
+  const header = document.querySelector('.page-header');
+  let wrap = document.querySelector('.wiki-search-wrap');
+  if (!wrap && header) {
+    wrap = document.createElement('div');
+    wrap.className = 'wiki-search-wrap';
+    wrap.innerHTML = '<span class="rune-search-icon">ᛉ</span><input type="text" class="wiki-search" placeholder="Поиск по вики..." autocomplete="off"><div class="wiki-search-results"></div>';
+    header.after(wrap);
+  }
   if (!wrap) return;
   const input = wrap.querySelector('.wiki-search');
   const container = wrap.querySelector('.wiki-search-results');
@@ -718,7 +725,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.querySelector('.wiki-grid')) initConstellation();
   if (document.querySelector('.rune-search-wrap')) initRuneSearch();
   if (document.getElementById('pantheon-chart')) initPantheonChart();
-  if (document.querySelector('.wiki-search-wrap')) initWikiSearch();
+  initWikiSearch();
   if (document.getElementById('gallery-grid')) initGalleryLightbox();
   if (document.getElementById('ideas-container')) initIdeasDelete();
 
