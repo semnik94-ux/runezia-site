@@ -47,7 +47,7 @@
       if (!container) return;
       fetch('data/devlog.json').then(function(r) { return r.json(); }).then(function(posts) {
         container.innerHTML = posts.map(function(p) {
-          return '<div class="devlog-card"><span class="dl-date">' + p.date + '</span><div class="dl-title">' + p.title + '</div><div class="dl-desc">' + p.desc + '</div><div class="dl-tags">' + (p.tags || []).map(function(t) { return '<span class="dl-tag">' + t + '</span>'; }).join('') + '</div></div>';
+          return '<div class="devlog-card"><span class="dl-date" style="color:#b04040">' + p.date + '</span><div class="dl-title">' + p.title + '</div><div class="dl-desc">' + p.desc + '</div><div class="dl-tags">' + (p.tags || []).map(function(t) { return '<span class="dl-tag">' + t + '</span>'; }).join('') + '</div></div>';
         }).join('');
       }).catch(function() {
         container.innerHTML = '<p style="color:#6a6a8a">Дневники пока пусты.</p>';

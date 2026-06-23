@@ -874,12 +874,19 @@ function initDevlogTeaser() {
   var container = document.getElementById('devlog-teaser');
   if (!container) return;
   fetch('data/devlog.json').then(function(r) { return r.json(); }).then(function(posts) {
-    var teasers = posts.slice(0, 2);
-    container.innerHTML = '<h2 style="color:#e8c547;font-family:Cinzel,serif;font-size:1.3rem;margin-bottom:8px">🗞️ Последний шепот</h2><p style="color:#6a6a8a;margin-bottom:16px;font-size:0.85rem">Дневники разработки мира</p>' + teasers.map(function(p) {
-      return '<div class="devlog-card"><span class="dl-date">' + p.date + '</span><div class="dl-title">' + p.title + '</div><div class="dl-desc">' + p.desc + '</div><div class="dl-tags">' + (p.tags || []).map(function(t) { return '<span class="dl-tag">' + t + '</span>'; }).join('') + '</div><a href="devlog.html" class="dl-readmore">Читать далее →</a></div>';
-    }).join('');
+    var post = posts[0];
+    if (!post) { container.innerHTML = '<div class="dt-header"><div class="dt-title">🗞️ Последний шепот</div><div class="dt-sub">Дневники пока пусты. Скоро здесь появятся записи.</div></div>'; return; }
+    container.innerHTML =
+      '<div class="dt-header"><div class="dt-title">🗞️ Последний шепот</div><div class="dt-sub">Дневники разработки мира</div></div>' +
+      '<div class="devlog-card">' +
+        '<span class="dl-date" style="color:#b04040">' + post.date + '</span>' +
+        '<div class="dl-title">' + post.title + '</div>' +
+        '<div class="dl-desc">' + post.desc + '</div>' +
+        '<div class="dl-tags">' + (post.tags || []).map(function(t) { return '<span class="dl-tag">' + t + '</span>'; }).join('') + '</div>' +
+        '<a href="devlog.html" class="dl-readmore">Читать далее →</a>' +
+      '</div>';
   }).catch(function() {
-    container.innerHTML = '<h2 style="color:#e8c547;font-family:Cinzel,serif;font-size:1.3rem">🗞️ Последний шепот</h2><p style="color:#6a6a8a">Дневники пока пусты. Скоро здесь появятся записи.</p>';
+    container.innerHTML = '<div class="dt-header"><div class="dt-title">🗞️ Последний шепот</div><div class="dt-sub">Хроники молчат. Тьма сгущается.</div></div>';
   });
 }
 

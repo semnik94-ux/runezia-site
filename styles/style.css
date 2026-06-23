@@ -26,11 +26,13 @@ h1, h2 {
   font-family: 'UnifrakturMaguntia', 'Cinzel Decorative', serif;
   font-weight: 400;
   letter-spacing: 0.03em;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
 }
 h3, h4, .logo {
   font-family: 'Cinzel', serif;
   font-weight: 600;
   letter-spacing: 0.02em;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 h1 {
   font-family: 'UnifrakturMaguntia', 'Cinzel Decorative', serif;
@@ -1526,6 +1528,15 @@ a:hover, button:hover, .btn:hover, .btn-small:hover, [onclick]:hover, .wiki-item
   font-family: serif;
   pointer-events: none;
 }
+.curse-bar-hint {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  color: #6a6a8a;
+  font-family: 'MedievalSharp', cursive;
+  font-style: italic;
+  line-height: 1.5;
+  opacity: 0.7;
+}
 
 /* ===== INTERACTIVE RUNE TOOLTIP ===== */
 .rune-tooltip {
@@ -1607,6 +1618,12 @@ a:hover, button:hover, .btn:hover, .btn-small:hover, [onclick]:hover, .wiki-item
   background: none;
   border: none;
   line-height: 1;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
 }
 .rune-modal-close:hover {
   color: #e8c547;
@@ -1653,15 +1670,37 @@ a:hover, button:hover, .btn:hover, .btn-small:hover, [onclick]:hover, .wiki-item
 }
 
 /* ===== DEVLOG ===== */
+@keyframes border-pulse {
+  0%, 100% { border-color: rgba(139,26,26,0.2); }
+  50% { border-color: rgba(139,26,26,0.5); }
+}
+
 .devlog-grid {
   display: grid;
   gap: 20px;
   margin-bottom: 60px;
 }
+.devlog-grid .devlog-card {
+  animation: border-pulse 6s ease-in-out infinite;
+  background: rgba(12,6,6,0.5);
+  border: 1px solid rgba(139,26,26,0.25);
+  overflow: hidden;
+}
+.devlog-grid .devlog-card::before {
+  content: 'ᚱ';
+  position: absolute;
+  right: -10px;
+  bottom: -10px;
+  font-size: 5rem;
+  color: rgba(139,26,26,0.04);
+  font-family: serif;
+  line-height: 1;
+  pointer-events: none;
+}
+
 .devlog-card {
   padding: 24px;
   border-radius: 12px;
-  border: 1px solid rgba(42,42,74,0.4);
   background: rgba(15,15,35,0.5);
   transition: border-color 0.3s, box-shadow 0.3s;
   position: relative;
@@ -1669,6 +1708,67 @@ a:hover, button:hover, .btn:hover, .btn-small:hover, [onclick]:hover, .wiki-item
 .devlog-card:hover {
   border-color: rgba(232,197,71,0.2);
   box-shadow: 0 0 25px rgba(232,197,71,0.04);
+}
+
+/* ===== DEVLOG TEASER (main page) ===== */
+.devlog-teaser {
+  margin-bottom: 60px;
+  padding: 28px 28px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(139,26,26,0.15);
+  background: radial-gradient(ellipse at 30% 40%, rgba(40,8,8,0.4), rgba(8,8,22,0.5));
+  position: relative;
+  overflow: hidden;
+}
+.devlog-teaser::before {
+  content: 'ᚱ ᛗ ᛏ';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: 7rem;
+  color: rgba(139,26,26,0.03);
+  font-family: serif;
+  line-height: 0.7;
+  letter-spacing: 0.3em;
+  pointer-events: none;
+}
+.devlog-teaser::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  border: 1px solid rgba(139,26,26,0.08);
+  pointer-events: none;
+  animation: border-pulse 8s ease-in-out infinite;
+}
+.devlog-teaser .dt-header {
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+}
+.devlog-teaser .dt-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, #cc3333, #e8c547);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 4px;
+}
+.devlog-teaser .dt-sub {
+  font-size: 0.8rem;
+  color: #6a6a8a;
+  font-family: 'MedievalSharp', cursive;
+  font-style: italic;
+}
+.devlog-teaser .devlog-card {
+  background: rgba(8,4,4,0.5);
+  border: 1px solid rgba(139,26,26,0.2);
+  position: relative;
+  z-index: 1;
+}
+.devlog-teaser .devlog-card::before {
+  display: none;
 }
 .devlog-card .dl-date {
   font-size: 0.75rem;
@@ -1717,6 +1817,7 @@ a:hover, button:hover, .btn:hover, .btn-small:hover, [onclick]:hover, .wiki-item
 }
 .devlog-card .dl-readmore:hover {
   color: #e8c547;
+  filter: drop-shadow(0 0 8px rgba(139,26,26,0.4));
 }
 
 /* ===== FOOTER WHISPER ===== */
