@@ -76,7 +76,7 @@ const RUNE_FAMILY_MAP = [
   { rune:'ᛊ', family:'Свет', color:'#ccaa33' },
   { rune:'ᛏ', family:'Защита', color:'#778899' },
   { rune:'ᛒ', family:'Плоть', color:'#cc5577' },
-  { rune:'ᛖ', family:'Звук', color:'#7777aa' },
+  { rune:'ᛖ', family:'Звук', color:'#6B7F9E' },
   { rune:'ᛗ', family:'Сон', color:'#664488' },
   { rune:'ᛚ', family:'Память', color:'#b8960f' },
   { rune:'ᛝ', family:'Душа', color:'#cc6666' },
@@ -97,7 +97,8 @@ function initRuneDecorations() {
       0%,100%{opacity:var(--rune-op,0.04)}
       50%{opacity:calc(var(--rune-op,0.04)+0.03)}
     }
-    .rune-float{position:fixed;pointer-events:none;user-select:none;z-index:-1;font-family:serif;animation:float-rune var(--dur,8s) ease-in-out infinite,pulse-rune var(--pulse,5s) ease-in-out infinite;animation-delay:var(--del,0s)}
+    .rune-float{position:fixed;pointer-events:none;user-select:none;z-index:-1;font-family:serif;animation:float-rune var(--dur,8s) ease-in-out infinite,pulse-rune var(--pulse,5s) ease-in-out infinite;animation-delay:var(--del,0s);transition:all 0.3s ease}
+    .rune-float:hover{transform:scale(1.15)!important;filter:drop-shadow(0 0 12px #C89B3C4D)drop-shadow(0 0 25px #C89B3C1A)}
   `;
   document.head.appendChild(style);
 
@@ -390,7 +391,7 @@ function initConstellation() {
           ctx.beginPath();
           ctx.moveTo(centers[i].x, centers[i].y);
           ctx.lineTo(centers[j].x, centers[j].y);
-          ctx.strokeStyle = `rgba(232,197,71,${opacity})`;
+          ctx.strokeStyle = `rgba(200,155,60,${opacity})`;
           ctx.lineWidth = 1;
           ctx.stroke();
         }
@@ -624,7 +625,7 @@ function initPantheonChart() {
 
   // Pantheon layout data
   const gods = [
-    { id: 'runn',   label: 'Рунн',      x: 400, y: 50,  r: 6, color: 'rgba(232,197,71,' },
+    { id: 'runn',   label: 'Рунн',      x: 400, y: 50,  r: 6, color: 'rgba(200,155,60,' },
     { id: 'faces',  label: '6 Ликов',    x: 400, y: 130, r: 5, color: 'rgba(200,180,255,' },
     { id: 'organs', label: '5 Органов',  x: 400, y: 210, r: 5, color: 'rgba(140,200,255,' },
     { id: 'fingers',label: '20 Перстов', x: 400, y: 290, r: 5, color: 'rgba(180,255,180,' },
@@ -643,7 +644,7 @@ function initPantheonChart() {
     const t = Date.now() / 1000;
 
     // Connections
-    ctx.strokeStyle = 'rgba(232,197,71,0.06)';
+    ctx.strokeStyle = 'rgba(200,155,60,0.06)';
     ctx.lineWidth = 1;
     ctx.setLineDash([3, 4]);
     gods.forEach(g => {
@@ -686,7 +687,7 @@ function initPantheonChart() {
     });
 
     // Orbit ring around center
-    ctx.strokeStyle = 'rgba(232,197,71,0.04)';
+    ctx.strokeStyle = 'rgba(200,155,60,0.04)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.arc(400, 50, 80 + Math.sin(t * 0.5) * 5, 0, Math.PI * 2);

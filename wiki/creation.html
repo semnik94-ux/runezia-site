@@ -13,19 +13,19 @@
   <style>
     .step-indicators { display:flex; gap:4px; margin-bottom:28px; flex-wrap:wrap; }
     .step-dot { flex:1; min-width:70px; text-align:center; padding:10px 4px; border-radius:8px; font-size:0.78rem; color:#555; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); transition:0.3s; }
-    .step-dot.active { color:#e8c547; background:rgba(232,197,71,0.1); border-color:rgba(232,197,71,0.3); }
+    .step-dot.active { color:#C89B3C; background:rgba(200,155,60,0.1); border-color:rgba(200,155,60,0.3); }
     .step-dot.done { color:#4a4; border-color:rgba(68,170,68,0.3); }
     .step-content { display:none; }
     .step-content.active { display:block; }
 
     .hall { margin-bottom:32px; }
-    .hall-title { font-family:'Cinzel',serif; color:#e8c547; margin-bottom:12px; display:flex; align-items:center; gap:10px; }
+    .hall-title { font-family:'Cinzel',serif; color:#C89B3C; margin-bottom:12px; display:flex; align-items:center; gap:10px; }
     .hall-title span { font-size:0.85rem; color:#666; font-family:sans-serif; }
     .hall-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; }
     .hall-card { padding:14px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); cursor:pointer; transition:0.2s; position:relative; }
-    .hall-card:hover { border-color:rgba(232,197,71,0.3); }
-    .hall-card .hc-name { color:#e8c547; font-family:'Cinzel',serif; }
-    .hall-card .hc-meta { font-size:0.8rem; color:#8888aa; margin-top:2px; }
+    .hall-card:hover { border-color:rgba(200,155,60,0.3); }
+    .hall-card .hc-name { color:#C89B3C; font-family:'Cinzel',serif; }
+    .hall-card .hc-meta { font-size:0.8rem; color:#8A8F9E; margin-top:2px; }
     .hall-card .hc-runes { margin-top:6px; display:flex; gap:4px; flex-wrap:wrap; }
     .hall-card .hc-del { position:absolute; top:6px; right:8px; color:#633; cursor:pointer; font-size:0.85rem; opacity:0; transition:0.2s; background:none; border:none; }
     .hall-card:hover .hc-del { opacity:1; }
@@ -34,16 +34,16 @@
 
     .race-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; margin-top:16px; max-height:400px; overflow-y:auto; padding-right:8px; }
     .race-grid::-webkit-scrollbar { width:4px; }
-    .race-grid::-webkit-scrollbar-thumb { background:rgba(232,197,71,0.3); border-radius:4px; }
+    .race-grid::-webkit-scrollbar-thumb { background:rgba(200,155,60,0.3); border-radius:4px; }
     .race-opt { cursor:pointer; padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); transition:0.2s; }
-    .race-opt:hover { border-color:rgba(232,197,71,0.3); background:rgba(232,197,71,0.05); }
-    .race-opt.chosen { border-color:#e8c547; background:rgba(232,197,71,0.1); }
-    .race-opt .ro-name { color:#e8c547; font-family:'Cinzel',serif; font-size:1.05rem; }
+    .race-opt:hover { border-color:rgba(200,155,60,0.3); background:rgba(200,155,60,0.05); }
+    .race-opt.chosen { border-color:#C89B3C; background:rgba(200,155,60,0.1); }
+    .race-opt .ro-name { color:#C89B3C; font-family:'Cinzel',serif; font-size:1.05rem; }
     .race-opt .ro-rune { font-size:0.8rem; opacity:0.7; display:block; margin-top:2px; }
-    .race-opt .ro-meta { font-size:0.8rem; color:#7777aa; display:block; margin-top:4px; }
+    .race-opt .ro-meta { font-size:0.8rem; color:#8A8F9E; display:block; margin-top:4px; }
 
-    .race-search { width:100%; padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:#d4d4e0; font-size:0.95rem; outline:none; transition:0.2s; margin-bottom:12px; }
-    .race-search:focus { border-color:rgba(232,197,71,0.4); }
+    .race-search { width:100%; padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:#A8ADB8; font-size:0.95rem; outline:none; transition:0.2s; margin-bottom:12px; }
+    .race-search:focus { border-color:rgba(200,155,60,0.4); }
 
     .rune-preview { text-align:center; padding:30px 20px; border-radius:16px; margin:20px 0; }
     .rune-preview .rp-name { font-family:'Cinzel Decorative',serif; font-size:2rem; display:block; }
@@ -51,33 +51,33 @@
 
     .rune-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; margin-top:16px; max-height:380px; overflow-y:auto; padding-right:8px; }
     .rune-grid::-webkit-scrollbar { width:4px; }
-    .rune-grid::-webkit-scrollbar-thumb { background:rgba(232,197,71,0.3); border-radius:4px; }
+    .rune-grid::-webkit-scrollbar-thumb { background:rgba(200,155,60,0.3); border-radius:4px; }
     .rune-opt { cursor:pointer; padding:12px; border-radius:10px; text-align:center; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); transition:0.2s; }
-    .rune-opt:hover { border-color:rgba(232,197,71,0.3); transform:translateY(-1px); }
-    .rune-opt.chosen { border-color:#e8c547; background:rgba(232,197,71,0.1); }
+    .rune-opt:hover { border-color:rgba(200,155,60,0.3); transform:translateY(-1px); }
+    .rune-opt.chosen { border-color:#C89B3C; background:rgba(200,155,60,0.1); }
     .rune-opt .ro-rn { font-size:0.95rem; font-weight:600; display:block; }
     .rune-opt .ro-rd { font-size:0.75rem; opacity:0.6; display:block; margin-top:2px; }
     .rune-opt .ro-rcolor { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:middle; }
 
     .form-row { display:flex; gap:16px; flex-wrap:wrap; margin-top:16px; }
     .form-group { flex:1; min-width:180px; }
-    .form-group label { display:block; font-size:0.85rem; color:#8888aa; margin-bottom:6px; }
-    .form-input { width:100%; padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:#d4d4e0; font-size:0.95rem; outline:none; transition:0.2s; }
-    .form-input:focus { border-color:rgba(232,197,71,0.4); }
-    .form-select { width:100%; padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:#d4d4e0; font-size:0.95rem; outline:none; transition:0.2s; appearance:none; cursor:pointer; }
-    .form-select:focus { border-color:rgba(232,197,71,0.4); }
-    .form-select option { background:#0a0a1a; color:#d4d4e0; }
-    .form-textarea { width:100%; min-height:80px; padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:#d4d4e0; font-size:0.95rem; outline:none; transition:0.2s; resize:vertical; font-family:inherit; }
-    .form-textarea:focus { border-color:rgba(232,197,71,0.4); }
+    .form-group label { display:block; font-size:0.85rem; color:#8A8F9E; margin-bottom:6px; }
+    .form-input { width:100%; padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:#A8ADB8; font-size:0.95rem; outline:none; transition:0.2s; }
+    .form-input:focus { border-color:rgba(200,155,60,0.4); }
+    .form-select { width:100%; padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:#A8ADB8; font-size:0.95rem; outline:none; transition:0.2s; appearance:none; cursor:pointer; }
+    .form-select:focus { border-color:rgba(200,155,60,0.4); }
+    .form-select option { background:#0a0a1a; color:#A8ADB8; }
+    .form-textarea { width:100%; min-height:80px; padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:#A8ADB8; font-size:0.95rem; outline:none; transition:0.2s; resize:vertical; font-family:inherit; }
+    .form-textarea:focus { border-color:rgba(200,155,60,0.4); }
 
     .backstory-box { position:relative; margin-top:16px; }
     .backstory-box .form-textarea { min-height:140px; }
-    .backstory-box .regenerate-btn { position:absolute; bottom:12px; right:12px; padding:6px 14px; border-radius:6px; border:1px solid rgba(232,197,71,0.2); background:rgba(232,197,71,0.08); color:#e8c547; font-size:0.8rem; cursor:pointer; transition:0.2s; }
-    .backstory-box .regenerate-btn:hover { background:rgba(232,197,71,0.15); }
+    .backstory-box .regenerate-btn { position:absolute; bottom:12px; right:12px; padding:6px 14px; border-radius:6px; border:1px solid rgba(200,155,60,0.2); background:rgba(200,155,60,0.08); color:#C89B3C; font-size:0.8rem; cursor:pointer; transition:0.2s; }
+    .backstory-box .regenerate-btn:hover { background:rgba(200,155,60,0.15); }
 
     .btn-row { margin-top:24px; display:flex; gap:12px; flex-wrap:wrap; }
-    .btn { padding:10px 28px; border-radius:8px; border:1px solid rgba(232,197,71,0.3); background:rgba(232,197,71,0.1); color:#e8c547; font-family:'Cinzel',serif; font-size:0.95rem; cursor:pointer; transition:0.2s; }
-    .btn:hover { background:rgba(232,197,71,0.2); }
+    .btn { padding:10px 28px; border-radius:8px; border:1px solid rgba(200,155,60,0.3); background:rgba(200,155,60,0.1); color:#C89B3C; font-family:'Cinzel',serif; font-size:0.95rem; cursor:pointer; transition:0.2s; }
+    .btn:hover { background:rgba(200,155,60,0.2); }
     .btn:disabled { opacity:0.3; cursor:default; }
     .btn-secondary { border-color:rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); color:#aaa; }
     .btn-secondary:hover { background:rgba(255,255,255,0.06); }
@@ -88,14 +88,14 @@
     .skip-link:hover { color:#888; }
 
     .final-card { border-radius:16px; padding:30px; margin:20px 0; text-align:center; position:relative; overflow:hidden; }
-    .final-card::before { content:''; position:absolute; inset:0; opacity:0.08; background:radial-gradient(ellipse at center, var(--aura-color,#e8c547), transparent 70%); }
+    .final-card::before { content:''; position:absolute; inset:0; opacity:0.08; background:radial-gradient(ellipse at center, var(--aura-color,#C89B3C), transparent 70%); }
     .final-card .fc-name { font-family:'Cinzel Decorative',serif; font-size:2rem; position:relative; }
     .final-card .fc-race { font-size:1rem; color:#aaa; margin-top:2px; position:relative; }
-    .final-card .fc-details { font-size:0.85rem; color:#7777aa; margin-top:2px; position:relative; }
+    .final-card .fc-details { font-size:0.85rem; color:#8A8F9E; margin-top:2px; position:relative; }
     .final-card .fc-runes { display:flex; gap:12px; justify-content:center; margin-top:16px; position:relative; flex-wrap:wrap; }
     .final-card .fc-rune { display:inline-block; padding:6px 18px; border-radius:20px; font-weight:600; font-size:0.9rem; }
     .final-card .fc-section { margin-top:16px; text-align:left; position:relative; }
-    .final-card .fc-section h4 { color:#e8c547; font-size:0.9rem; margin-bottom:4px; }
+    .final-card .fc-section h4 { color:#C89B3C; font-size:0.9rem; margin-bottom:4px; }
     .final-card .fc-section p { color:#aaa; font-size:0.85rem; line-height:1.5; white-space:pre-wrap; }
     .final-card .fc-saved { margin-top:12px; color:#4a4; font-size:0.85rem; position:relative; }
 
@@ -117,7 +117,7 @@
     .rune-memory { background:#b8960f; }
     .rune-dream { background:#664488; }
     .rune-geometry { background:#228855; }
-    .rune-sound { background:#7777aa; }
+    .rune-sound { background:#8A8F9E; }
     .rune-flesh { background:#cc5577; }
     .rune-metal { background:#666677; }
     .rune-soul { background:#cc6666; }

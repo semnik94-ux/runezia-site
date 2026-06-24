@@ -21,7 +21,7 @@ const RUNE_FAMILIES = [
   { name:'Память',   desc:'Знания, архивы',                          color:'#b8960f', cls:'rune-memory', aclass:'aura-memory' },
   { name:'Сон',      desc:'Контроль, усыпление',                     color:'#664488', cls:'rune-dream', aclass:'aura-dream' },
   { name:'Геометрия',desc:'Пространство, телепортация',              color:'#228855', cls:'rune-geometry', aclass:'aura-geometry' },
-  { name:'Звук',     desc:'Ауры, дебаффы',                           color:'#7777aa', cls:'rune-sound', aclass:'aura-sound' },
+  { name:'Звук',     desc:'Ауры, дебаффы',                           color:'#6B7F9E', cls:'rune-sound', aclass:'aura-sound' },
   { name:'Плоть',    desc:'Биомантия, мутации',                      color:'#cc5577', cls:'rune-flesh', aclass:'aura-flesh' },
   { name:'Металл',   desc:'Ковка, магнитные поля',                   color:'#666677', cls:'rune-metal', aclass:'aura-metal' },
   { name:'Душа',     desc:'Связывание душ, обмен, жертва',           color:'#cc6666', cls:'rune-soul', aclass:'aura-soul' }
